@@ -2,6 +2,7 @@
  * @constructor
  */
 function WallLayer(layer) {
+  Math.seedrandom("cristea-is-sexy");
   this.layer = layer;
   this.scene = new THREE.Scene();
   this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 1, 10000);
@@ -17,11 +18,15 @@ function WallLayer(layer) {
     }));
 
   for(var i = 0; i < this.layer.config.hexColor.length; i++) {
+    var factor = i % 2;
+    var rand = this.randomNum(5);
+    var sizeRandomness = 0.1*rand*factor*(factor>1? -1 : 1);
+    var pos = { x:250*i, y: 160*factor*(i%2==0?2:-1), z: 50*factor*(i%2==0?-2:1) };
     this.hexes.push(this.createHexagon({
       index:i,
-      radius: 100 + 0.1*i,
-      radusBottom: 40 + 0.1*i,
-      position: {x: 250*i, y: 0, z: 0}
+      radius: 100 + 100*sizeRandomness,
+      radusBottom: 40 + 40*sizeRandomness,
+      position: pos
     }));
   }
 
@@ -29,7 +34,7 @@ function WallLayer(layer) {
   this.scene.add(new THREE.AmbientLight(0x222222));
 
   var light = new THREE.PointLight( 0xffffff, 1, 100 );
-  light.position.set( 50, 50, 50 );
+  light.position.set(50, 50, 50);
   this.scene.add(light);
   var pointLight = new THREE.PointLight(0xFFFFFF);
   pointLight.position.x = 10;
@@ -68,8 +73,13 @@ WallLayer.prototype.createHexagon = function(options) {
   return { outer: hex, inner: innerHex };
 }
 
+WallLayer.prototype.randomNum = function(threshhold) {
+  return Math.floor((Math.random() * threshhold) + 1);
+}
+
 WallLayer.prototype.update = function(frame, currentFrame) {
   this.camera.position.z = 600;
+  this.camera.position.y = -75;
   this.camera.position.x = currentFrame;
 };
 
