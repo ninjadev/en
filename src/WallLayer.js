@@ -17,7 +17,8 @@ function WallLayer(layer) {
       color: 0xdbd5c9
     }));
 
-  for(var i = 0; i < this.layer.config.hexColor.length; i++) {
+  var hexLength = this.layer.config.hexColor.length;
+  for(var i = 0; i < hexLength; i++) {
     var factor = i % 2;
     var rand = this.randomNum(5);
     var sizeRandomness = 0.1*rand*factor*(factor>1? -1 : 1);
@@ -29,6 +30,14 @@ function WallLayer(layer) {
       position: pos
     }));
   }
+
+  this.hexes.push(this.createHexagon({
+    index: hexLength-1,
+    radius: 150,
+    radiusBottom: 80,
+    position: { x: 250*(hexLength + 2), y:0, z:0 },
+    text: "Hello"
+  }));
 
   this.scene.add(this.background); 
   this.scene.add(new THREE.AmbientLight(0x222222));
@@ -48,24 +57,37 @@ WallLayer.prototype.createHexagon = function(options) {
   var pos = options.position || { x:0, y:0, z:0 };
 
   var hexGeometry = new THREE.TorusGeometry(options.radius || 100, 10, 4, 6);
-  var hex = new THREE.Mesh(
-    hexGeometry, new THREE.MeshLambertMaterial({
-      color: +this.layer.config.hexColor[index].outer || 0x00ff00,
-      shading: THREE.FlatShading
-    }));
+  var material = new THREE.MeshLambertMaterial({
+    color: +this.layer.config.hexColor[index].outer || 0x00ff00,
+    shading: THREE.FlatShading
+  });
+
+  var hex = new THREE.Mesh(hexGeometry, material);
   hex.position = pos;
 
-  var innerHexGeometry = new THREE.CylinderGeometry(options.radius || 100, options.radiusBottom || 40, 1, 6, 1);
-  var innerHex = new THREE.Mesh(
-    innerHexGeometry,
-    new THREE.MeshLambertMaterial({
+  var isText = options.text !== undefined;
+  if(isText) {
+    var innerHexGeometry = new THREE.CircleGeometry(options.radius || 100,  6);
+    var texture = new THREE.Texture(this.generateTextSprite(options.text, '#ffffff', '#456787', 256));
+    var innerMaterial = new THREE.MeshLambertMaterial({
+      map: texture
+    });
+    texture.needsUpdate = true;
+  } else {
+    var innerHexGeometry = new THREE.CylinderGeometry(options.radius || 100, options.radiusBottom || 40, 1, 6, 1);
+    var innerMaterial = new THREE.MeshLambertMaterial({
       color: +this.layer.config.hexColor[index].inner || 0xff0000,
-    shading: THREE.FlatShading
-    }));
+      shading: THREE.FlatShading
+    });
+  }
+
+  var innerHex = new THREE.Mesh(innerHexGeometry, innerMaterial);
   innerHex.position = pos;
 
-  innerHex.rotation.x = 0.5 * Math.PI;
-  innerHex.rotation.y = 1 / 6 * Math.PI;
+  if(!isText) {
+    innerHex.rotation.x = 0.5 * Math.PI;
+    innerHex.rotation.y = 1 / 6 * Math.PI;
+  }
 
   this.scene.add(hex);
   this.scene.add(innerHex);
@@ -75,6 +97,24 @@ WallLayer.prototype.createHexagon = function(options) {
 
 WallLayer.prototype.randomNum = function(threshhold) {
   return Math.floor((Math.random() * threshhold) + 1);
+}
+
+WallLayer.prototype.generateTextSprite = function(text, textColor, bgColor, size) {
+  var canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, size, size);
+
+  ctx.fillStyle = textColor;
+  ctx.font = '40px Arial';
+  ctx.textAlign = 'center';
+  if(typeof(text) !== 'string') text += "";
+  ctx.fillText(text, size/2, size/2);
+
+  return canvas;
 }
 
 WallLayer.prototype.update = function(frame, currentFrame) {
