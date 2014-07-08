@@ -1,5 +1,27 @@
 [
   {
+    "type": "WallLayer",
+    "displayName": "Intro.WallLayer",
+    "startFrame": 0,
+    "endFrame": 3000,
+    "color": "#1b592f",
+    "config": {
+        "hexColor" : [
+            {"outer": "0x967117", "inner": "0xf4a460"},
+            {"outer": "0x967117", "inner": "0xc2b280"},
+            {"outer": "0x967117", "inner": "0xe1a95f"},
+            {"outer": "0x967117", "inner": "0x6c541e"},
+            {"outer": "0x967117", "inner": "0xe48400"}
+        ]
+    }
+  },
+  {
+    "type": "GlowFXLayer",
+    "displayName": "Intro.GlowLayer",
+    "startFrame": 0,
+    "endFrame": 3000,
+    "color": "#59493f"
+  {
     "type": "DesertLayer",
     "dependencies": [
       "VolcanoFactory"
