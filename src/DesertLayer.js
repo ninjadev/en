@@ -3,7 +3,6 @@
  */
 function DesertLayer(layer) {
   this.config = layer.config;
-  window.c = this.config;
 
   this.scene = new THREE.Scene();
   this.cameraController = new CameraController(layer.position);
@@ -101,7 +100,8 @@ function DesertLayer(layer) {
   this.dandelionSeed = DandelionSeed(this, 0.2);
   this.dandelionSeed.position.copy(this.config.dandelion.start);
   this.scene.add(this.dandelionSeed);
-  window.d = this.dandelionSeed;
+
+  this.initGrass();
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
@@ -135,6 +135,48 @@ DesertLayer.prototype.initDandelionSeedMaterials = function() {
       map: Loader.loadTexture('res/textures/seedTexture.png')
     })
   };
+};
+
+DesertLayer.prototype.initGrass = function() {
+  this.grasses = [];
+  this.numGrasses = 100;
+  this.grass = {
+    growthDuration: this.config.grass.endGrowthFrame - this.config.grass.startGrowthFrame,
+    startY: -200,
+    targetY: this.config.waterAmplitude * 2 + 10
+  };
+  this.grass.maxFramesOffset = 0.01 * this.grass.growthDuration * (this.numGrasses - 1);
+
+  var that = this;
+  var material = new THREE.MeshBasicMaterial({
+    map: Loader.loadTexture('res/textures/grass_diffuse.png')
+  });
+
+  var loader = new THREE.OBJLoader();
+  loader.load('http://localhost:9999/res/objects/Grass_01.obj', function(object) {
+    object.traverse(function(child) {
+      if (child instanceof THREE.Mesh) {
+        child.material = material;
+      }
+    });
+
+    for (var i = 0; i < that.numGrasses; i++) {
+      var clonedObject = object.clone();
+      Math.seedrandom('yo' + i.toString());
+      var randomAngle = Math.random() * 2 * Math.PI;
+      var randomRadius = 1700 + 800 * Math.random();
+      clonedObject.position.x = 900 + randomRadius * Math.cos(randomAngle);
+      clonedObject.position.y = that.grass.startY;
+      clonedObject.position.z = -300 + randomRadius * Math.sin(randomAngle);
+      clonedObject.rotation.y = Math.sin(randomRadius);
+      Math.seedrandom("iverjo-likes-grass" + i.toString());
+      var scale = 150 + 150 * Math.random();
+      clonedObject.scale.set(scale, scale * 1.25, scale * 1.5);
+      clonedObject.initScale = scale;
+      that.grasses.push(clonedObject);
+      that.scene.add(clonedObject);
+    }
+  });
 };
 
 DesertLayer.prototype.getEffectComposerPass = function() {
@@ -182,6 +224,8 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
   //TODO: don't update dandelion seed when it is not in sight
   this.updateDandelionSeed(frame, relativeFrame);
 
+  this.updateGrass(frame, relativeFrame);
+
   for(var i = 0; i < this.doomSkyBox.material.materials.length; i++) {
     var material = this.doomSkyBox.material.materials[i];
     material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
@@ -209,6 +253,29 @@ DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
     this.dandelionSeed.rotation.z = 0.28 * Math.cos(relativeFrame * 0.03);
   } else {
     this.dandelionSeed.position.y = groundLevel;
+  }
+};
+
+DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
+  //grow
+  if (relativeFrame >= this.config.grass.startGrowthFrame
+    && relativeFrame < (this.config.grass.endGrowthFrame + this.grass.maxFramesOffset)) {
+    for (var i = 0; i < this.grasses.length; i++) {
+      var grass = this.grasses[i];
+      var offset = 0.01 * this.grass.growthDuration * i;
+      var t = (relativeFrame - this.config.grass.startGrowthFrame - offset) / this.grass.growthDuration;
+      grass.position.y = smoothstep(this.grass.startY, this.grass.targetY, t);
+      var scale = smoothstep(0, grass.initScale, t - 0.25);
+      grass.scale.set(scale, scale, scale);
+    }
+  }
+
+  //windy
+  if (relativeFrame >= this.config.grass.startGrowthFrame
+    && relativeFrame < this.config.grass.windyUntilFrame) {
+    for (var i = 0; i < this.grasses.length; i++) {
+      this.grasses[i].rotation.x = 0.16 * Math.sin(relativeFrame * 0.033 + 1.5 * i / this.grasses.length);
+    }
   }
 };
 
