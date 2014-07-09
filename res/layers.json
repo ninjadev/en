@@ -1,7 +1,7 @@
 [
   {
-    "type": "BlankLayer",
-    "displayName": "Clear",
+    "type": "SkyboxLayer",
+    "displayName": "Skybox",
     "startFrame": 0,
     "endFrame": 3000,
     "color": "#1b592f",
