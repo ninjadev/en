@@ -88,11 +88,16 @@ function DesertLayer(layer) {
 
   this.initSkybox();
 
+  this.initDandelionSeedMaterials();
+  this.dandelionSeed = DandelionSeed(this, 0.2);
+  this.dandelionSeed.position.y = 300;
+  this.scene.add(this.dandelionSeed);
+
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
 
 DesertLayer.prototype.initSkybox = function() {
-  var imagePrefix = "/res/skyboxes/dunes_";
+  var imagePrefix = "res/skyboxes/dunes_";
   var directions  = ["right", "left", "top", "bottom", "front", "back"];
   var imageSuffix = ".jpg";
   var skyGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
@@ -106,9 +111,20 @@ DesertLayer.prototype.initSkybox = function() {
   }
   var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
   var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
-  skyBox.position.y = this.config.waterAmplitude*2;
+  skyBox.position.y = this.config.waterAmplitude * 2;
   this.scene.add(skyBox);
-  Loader.start(function(){}, function(){});
+};
+
+DesertLayer.prototype.initDandelionSeedMaterials = function() {
+  this.dandelionSeedMaterials = {
+    wing: new THREE.MeshBasicMaterial({color: 0xEEEEEE, opacity: 0.5, transparent: true}),
+    body: new THREE.MeshBasicMaterial({
+      map: Loader.loadTexture('res/textures/seedBodyTexture.png')
+    }),
+    seed: new THREE.MeshBasicMaterial({
+      map: Loader.loadTexture('res/textures/seedTexture.png')
+    })
+  };
 };
 
 DesertLayer.prototype.getEffectComposerPass = function() {
@@ -128,7 +144,7 @@ DesertLayer.prototype.render = function(renderer, interpolation) {
 DesertLayer.prototype.update = function(frame, relativeFrame) {
   this.cameraController.updateCamera(relativeFrame);
 
-  for (var i=0; i < this.waterHexes.length; i++) {
+  for (var i = 0; i < this.waterHexes.length; i++) {
     var hex = this.waterHexes[i];
 
     var dist = hex.position.length();
@@ -137,6 +153,21 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
     var newColor = hex.userData.baseColor.clone();
     newColor.multiplyScalar(1 + hex.position.y / (this.config.waterAmplitude * 8));
     hex.material.color = newColor;
+  }
+
+  //TODO: don't update dandelion seed when it is not in sight
+  this.updateDandelionSeed(frame, relativeFrame);
+};
+
+DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
+  this.dandelionSeed.rotation.x = 0.25 * Math.sin(relativeFrame * 0.0321 + 5);
+  this.dandelionSeed.rotation.y = 0.018 * relativeFrame + 0.15 * Math.sin(relativeFrame * 0.035);
+  this.dandelionSeed.rotation.z = 0.28 * Math.cos(relativeFrame * 0.03);
+
+  for (var i = 0; i < this.dandelionSeed.wingCylinders.length; i++) {
+    var wingCylinder = this.dandelionSeed.wingCylinders[i];
+    wingCylinder.rotation.z = wingCylinder.initialRotation.z + Math.PI / 8 * Math.sin(wingCylinder.rotation.z) * (0.5 + 0.02 * i) * 0.8 * Math.sin(relativeFrame * 0.036);
+    wingCylinder.rotation.y = wingCylinder.initialRotation.y + Math.sin(i) * 0.3 * Math.sin(relativeFrame * 0.022);
   }
 };
 
@@ -177,4 +208,55 @@ function DesertGround() {
     color: 0xfff7c7
   }));
   return rectMesh;
+}
+
+/**
+ * @param layer reference to instance of DesertLayer
+ * @param scale number between 0 and x
+ * @returns {THREE.Object3D}
+ * @constructor
+ */
+function DandelionSeed(layer, scale) {
+  var seedSphereGeometry, bodyCylinderGeometry, wingCylinderGeometry, //geometries
+    dandelionSeed, seedSphere, topSphere, bodyCylinder, // meshes
+    WING_LENGTH = 120; //constants
+
+  seedSphereGeometry = new THREE.SphereGeometry(12, 12, 20);
+  bodyCylinderGeometry = new THREE.CylinderGeometry(2, 2, 240, 16);
+  wingCylinderGeometry = new THREE.CylinderGeometry(0.5, 1, WING_LENGTH, 8);
+  wingCylinderGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, WING_LENGTH / 2, 0));
+
+  dandelionSeed = new THREE.Object3D();
+
+  seedSphere = new THREE.Mesh(seedSphereGeometry, layer.dandelionSeedMaterials.seed);
+  seedSphere.scale.y = 2.9;
+  seedSphere.position.y = -240;
+
+  bodyCylinder = new THREE.Mesh(bodyCylinderGeometry, layer.dandelionSeedMaterials.body);
+  bodyCylinder.position.y = -120;
+
+  dandelionSeed.wingCylinders = [];
+
+  Math.seedrandom("iverjo-is-sexy");
+  for (var i = 0; i < 50; i++) {
+    var wingCylinder = new THREE.Mesh(wingCylinderGeometry, layer.dandelionSeedMaterials.wing);
+
+    wingCylinder.rotation.z = Math.PI / 5 + Math.random() * (Math.PI / 2 - Math.PI / 4);
+    wingCylinder.rotation.y = Math.random() * 2 * Math.PI;
+    wingCylinder.initialRotation = {
+      x: wingCylinder.rotation.x,
+      y: wingCylinder.rotation.y,
+      z: wingCylinder.rotation.z
+    };
+
+    dandelionSeed.wingCylinders.push(wingCylinder);
+    dandelionSeed.add(wingCylinder);
+  }
+
+  dandelionSeed.add(seedSphere);
+  dandelionSeed.add(bodyCylinder);
+
+  dandelionSeed.scale.set(scale, scale, scale);
+
+  return dandelionSeed;
 }
