@@ -18,6 +18,11 @@ function DesertLayer(layer) {
     false // Party mode
     );
 
+  this.light1 = new THREE.DirectionalLight();
+  this.light1.position.set(-1000, -1000, 1000);
+  this.scene.add(this.light1);
+  this.scene.add(new THREE.AmbientLight(0x222222));
+
   this.waterHexes = [];
 
   this.waterPond = new THREE.Object3D();
@@ -103,6 +108,127 @@ function DesertLayer(layer) {
   this.scene.add(this.dandelionSeed);
 
   this.initGrass();
+
+  this.Z = 10;
+
+  //this.splines = DesertLayer.createTreeSplines();
+  //console.log(a = this.splines);
+  //
+  this.treeScale = 5;
+  
+  this.splines = [
+    /* 1 */
+    new THREE.SplineCurve3([
+      new THREE.Vector3(0, 0, 0).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-1, 10, 1).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-15, 25, 0).multiplyScalar(this.treeScale),
+      new THREE.Vector3(8, 52, -10).multiplyScalar(this.treeScale),
+      new THREE.Vector3(11, 66, -5).multiplyScalar(this.treeScale),
+      new THREE.Vector3(7, 78, -2).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-10, 82, 0).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-33, 68, 1).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-45, 71, 4).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-52, 69, 5).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-63, 81, 5).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-64, 91, 5).multiplyScalar(this.treeScale)
+    ]),
+
+    /* 2 */
+    new THREE.SplineCurve3([
+      new THREE.Vector3(11, 66, 0).multiplyScalar(this.treeScale),
+      new THREE.Vector3(24, 77, -10).multiplyScalar(this.treeScale),
+      new THREE.Vector3(38, 88, -14).multiplyScalar(this.treeScale),
+      new THREE.Vector3(54, 89, -15).multiplyScalar(this.treeScale),
+      new THREE.Vector3(63, 93, -18).multiplyScalar(this.treeScale)
+    ]),
+
+    /* 3 */
+    new THREE.SplineCurve3([
+      new THREE.Vector3(38, 88, -14).multiplyScalar(this.treeScale),
+      new THREE.Vector3(49, 95, -13).multiplyScalar(this.treeScale),
+      new THREE.Vector3(64, 103, -11).multiplyScalar(this.treeScale),
+      new THREE.Vector3(82, 103, -10).multiplyScalar(this.treeScale)
+    ]),
+
+    /* 4 */
+    new THREE.SplineCurve3([
+      new THREE.Vector3(7, 78, -2).multiplyScalar(this.treeScale),
+      new THREE.Vector3(15, 84, 10).multiplyScalar(this.treeScale),
+      new THREE.Vector3(12, 87, 8).multiplyScalar(this.treeScale),
+      new THREE.Vector3(22, 111, 16).multiplyScalar(this.treeScale),
+      new THREE.Vector3(38, 117, 25).multiplyScalar(this.treeScale)
+    ]),
+
+    /* 5 */
+    new THREE.SplineCurve3([
+      new THREE.Vector3(7, 78, -2).multiplyScalar(this.treeScale),
+      new THREE.Vector3(3, 84, -5).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-16, 70, -19).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-25, 88, -24).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-28, 92, -26).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-20, 104, -30).multiplyScalar(this.treeScale),
+      new THREE.Vector3(-15, 122, -32).multiplyScalar(this.treeScale)
+    ])
+  ];
+
+
+
+  this.rubbles = [];
+  for(var i = 0; i < 100; i++) {
+    var rubble = new THREE.Mesh(
+        new THREE.BoxGeometry(
+          2 * (this.Z + this.Z / 10 * Math.random()),
+          2 * (this.Z + this.Z / 10 * Math.random()),
+          2 * (this.Z + this.Z / 10 * Math.random())),
+        new THREE.MeshLambertMaterial({
+          color: 0x444444
+        }));
+    var maxlen = 2 * this.Z;
+    this.rubbleMaxlen = maxlen;
+    var deg = Math.random() * 2 * 3.141592;
+    var len = Math.random() * maxlen;
+    rubble.position.x = 402.44;
+    rubble.position.z = 1311.14;
+    rubble.rotation.x = Math.random() * 3.141592;
+    rubble.rotation.y = Math.random() * 3.141592;
+    rubble.rotation.z = Math.random() * 3.141592;
+    rubble.position.x += Math.cos(deg) * len;
+    rubble.position.z += Math.sin(deg) * len;
+    rubble.position.targetY = 11 + this.Z * Math.sqrt((maxlen - Math.abs(rubble.position.x)) *
+                        (maxlen - Math.abs(rubble.position.y))) * Math.random();
+    this.scene.add(rubble);
+    this.rubbles[i] = rubble;
+  }
+
+
+  this.greenColor = new THREE.Color(0xa3cd01).getHSL();
+  this.lightBrownColor = new THREE.Color(0xc3a779).getHSL();
+  this.darkBrownColor = new THREE.Color(0x4f4340).getHSL();
+  this.darkBrownColor = new THREE.Color(0xffffff).getHSL();
+  this.barkTexture = Loader.loadTexture('/res/bark.jpg');
+  this.barkTexture.wrapS = this.barkTexture.wrapT = THREE.RepeatWrapping;
+  this.barkTexture.repeat.set(12, 4);
+  this.barkNormalMap = Loader.loadTexture('/res/bark-normalmap.jpg');
+  this.barkNormalMap.wrapS = this.barkNormalMap.wrapT = THREE.RepeatWrapping;
+  this.barkNormalMap.repeat.set(12, 4);
+  Loader.start(function(){}, function(){});
+
+  this.tubes = [];
+  for(var i = 0; i < this.splines.length; i++) {
+    var spline = this.splines[i];
+    var tubeGeometry = new THREE.TubeGeometryEx(
+      spline, 500, 10 * this.treeScale, 12, false, true);
+    tubeGeometry.dynamic = true;
+    this.tubes[i] = new THREE.Mesh(
+      tubeGeometry,
+      new THREE.MeshPhongMaterial({
+        color: 0x4f4340,
+        map: this.barkTexture,
+        normalMap: this.barkNormalMap,
+        shininess: 10
+      }));
+    this.scene.add(this.tubes[i]);
+  }
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
@@ -255,6 +381,39 @@ DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
   } else {
     this.dandelionSeed.position.y = groundLevel;
   }
+
+  this.growthIndex = relativeFrame / 10;
+
+  var treeRelativeFrame = relativeFrame + 1897 - 957;
+  var treeColor = this.getTreeColor(treeRelativeFrame - 1897).getHSL();
+
+  var radiusDampener = 0.1 + (treeRelativeFrame - 1897) / (4439 - 1897);
+  for(var i = 0; i < this.tubes.length; i++) {
+    var tube = this.tubes[i];
+    tube.material.color.setHSL(treeColor.h, treeColor.s, treeColor.l);
+    var growthIndex = [
+      (treeRelativeFrame - 1897) / 20,
+      (treeRelativeFrame - 2420) / 20,
+      (treeRelativeFrame - 3200) / 20,
+      (treeRelativeFrame - 2800) / 20,
+      (treeRelativeFrame - 2900) / 20
+    ][i];
+    for(var j = 0; j < tube.geometry.vertices.length; j++) {
+      var vertex = tube.geometry.vertices[j];
+      var center = tube.geometry.centers[j];
+      var radius = tube.geometry.radii[j];
+      var index = tube.geometry.indexes[j];
+      vertex.x = center.x + radius.x * radiusDampener * clamp(
+          0, growthIndex - index / 10, 1 - center.y / 140 / this.treeScale);
+      vertex.y = center.y + radius.y * radiusDampener * clamp(
+          0, growthIndex - index / 10, 1 - center.y / 140 / this.treeScale);
+      vertex.z = center.z + radius.z * radiusDampener * clamp(
+          0, growthIndex - index / 10, 1 - center.y / 140 / this.treeScale);
+    }
+    tube.geometry.verticesNeedUpdate = true;
+
+    tube.position.y = 11;
+  }
 };
 
 DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
@@ -357,4 +516,102 @@ function DandelionSeed(layer, scale) {
   dandelionSeed.scale.set(scale, scale, scale);
 
   return dandelionSeed;
+}
+
+
+DesertLayer.createTreeSplines = function() {
+  var V = THREE.Vector3;
+  var root = [new V(0, 0, 0), new V(0, 10, 0), new V(0, 20, 0)];
+  var splines = [root];
+  var stack = [root];
+
+  var pContinue = 0.5;
+  var pSpawn = 0.0;
+
+  max = 200;
+
+
+  while(stack.length && (max --> 0)) {
+    var current = stack.pop();
+    var last = current[current.length - 1];     
+    var secondLast = current[current.length - 2];     
+    var newest = new V(
+      last.x * 2 - secondLast.x,
+      last.y * 2 - secondLast.y,
+      last.z * 2 - secondLast.z
+    );
+    newest.normalize();
+    newest.add(new V((Math.random() - 0.5) * 8,
+                     (Math.random() - 0.2) * 8,
+                     (Math.random() - 0.5) * 8));
+    newest.normalize();
+    newest.multiplyScalar(1000 / current.length);
+    newest.add(last);
+
+    if(Math.random() < pContinue) {
+      current.push(newest);
+      stack.push(current);
+    }
+
+    if(Math.random() < pSpawn) {
+      var second = new V(Math.random() - 0.5,
+                         Math.random() - 0.4,
+                         Math.random() - 0.5);
+      second.normalize();
+      second.multiplyScalar(20);
+      var third = new V().copy(second);
+      second.add(last);
+      third.add(second);
+      var newSpline = [new V().copy(last), second, third];
+      stack.push(newSpline);
+      splines.push(newSpline);
+    }
+  }
+
+  for(var i = 0; i < splines.length; i++) {
+    splines[i] = new THREE.SplineCurve3(splines[i]);
+  }
+
+  return splines;
+}
+
+
+DesertLayer.prototype.getTreeColor = function(relativeFrame) {
+  this.greenColor = new THREE.Color(0xa3cd01).getHSL();
+  this.lightBrownColor = new THREE.Color(0xc3a779).getHSL();
+  this.darkBrownColor = new THREE.Color(0x4f4340).getHSL();
+  this.darkBrownColor = new THREE.Color(0xffffff).getHSL();
+  var firstStop = 300;
+  var secondStop = 500;
+  var thirdStop = 1000;
+
+  if(relativeFrame < secondStop) {
+    var fromColor = this.greenColor;
+    var toColor = this.lightBrownColor;
+    var from = firstStop;
+    var to = secondStop;
+  } else if(relativeFrame < thirdStop) {
+    var fromColor = this.lightBrownColor;
+    var toColor = this.darkBrownColor;
+    var from = secondStop;
+    var to = thirdStop;
+  } else {
+    var fromColor = this.darkBrownColor;
+    var toColor = this.darkBrownColor;
+    var from = thirdStop;
+    var to = thirdStop;
+  }
+
+  var colorH = lerp(fromColor.h,
+      toColor.h,
+      (relativeFrame - from) / (to - from));
+  var colorS = lerp(fromColor.s,
+      toColor.s,
+      (relativeFrame - from) / (to - from));
+  var colorL = lerp(fromColor.l,
+      toColor.l,
+      (relativeFrame - from) / (to - from));
+  var color = new THREE.Color();
+  color.setHSL(colorH, colorS, colorL);
+  return color;
 }
