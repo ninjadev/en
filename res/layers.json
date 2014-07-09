@@ -1,12 +1,12 @@
 [
   {
-    "type": "BlankLayer",
-    "displayName": "Clear",
-    "startFrame": 0,
-    "endFrame": 3000,
-    "color": "#1b592f",
+    "type": "DesertLayer",
+    "displayName": "Desert",
+    "startFrame": 500,
+    "endFrame": 9823,
+    "color": "#7ba90f",
     "config": {
-      "offset": 1.7
+      "waterAmplitude": 5
     }
   }
 ]
