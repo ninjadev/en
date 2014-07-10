@@ -29,8 +29,8 @@
   {
     "type": "LensFlareLayer",
     "displayName": "Lens flare",
-    "startFrame": 1000,
-    "endFrame": 2306,
+    "startFrame": 1970,
+    "endFrame": 2500,
     "color": "#8b992f",
     "config": {
       "offset": 0

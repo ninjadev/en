@@ -90,14 +90,14 @@ void main(void)
     //mouse.x *= iResolution.x/iResolution.y; //fix aspect ratio
     //if (iMouse.z<.5)
     //{
-    mouse.x=sin(time*0.01)*.5;
-    mouse.y=sin(time*0.01)*.5;
+    mouse.x=sunX-.5;
+    mouse.y=sunY-.5;
     //}
 
     vec3 color = vec3(1.4,1.2,1.0)*lensflare(uv,mouse.xy);
     color -= noise(gl_FragCoord.xy)*.015;
     color = cc(color,.5,.1);
     //gl_FragColor = vec4(color,1.0);
-    vec4 img = texture2D(tDiffuse, vec2(vUv.x, vUv.y)) + vec4(color,1.0);
+    vec4 img = texture2D(tDiffuse, vec2(vUv.x, vUv.y))*(1.-amount*.5) + vec4(color,1.0)*amount;
     gl_FragColor = img;
 }
