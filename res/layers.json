@@ -3,10 +3,24 @@
     "type": "DesertLayer",
     "displayName": "Desert",
     "startFrame": 500,
-    "endFrame": 9823,
+    "endFrame": 6728,
     "color": "#7ba90f",
     "config": {
       "waterAmplitude": 5
     }
+  },
+  {
+    "type": "SpaceLayer",
+    "displayName": "Space",
+    "startFrame": 6728,
+    "endFrame": 10000,
+    "color": "#8c2b3c"
+  },
+  {
+    "type": "BloomLayer",
+    "displayName": "Bloom",
+    "startFrame": 6728,
+    "endFrame": 10000,
+    "color": "#291c4c"
   }
 ]
