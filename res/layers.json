@@ -27,6 +27,23 @@
     "color": "#8c2b3c"
   },
   {
+    "type": "BloomLayer",
+    "displayName": "Bloom",
+    "startFrame": 6728,
+    "endFrame": 10000,
+    "color": "#291c4c"
+  },
+  {
+    "type": "HeatHazeLayer",
+    "displayName": "Heat haze",
+    "startFrame": 2507,
+    "endFrame": 3306,
+    "color": "#1b592f",
+    "config": {
+      "offset": 0
+    }
+  },
+  {
     "type": "LensFlareLayer",
     "displayName": "Lens flare",
     "startFrame": 1970,
@@ -37,3 +54,4 @@
     }
   }
 ]
+
