@@ -10,6 +10,7 @@ function WallLayer(layer) {
   this.fontLoaded = false;
 
   this.hexes = [];
+  this.hexesStartPosition = [];
   this.hexesPosition = [];
   this.textures = [];
 
@@ -26,7 +27,9 @@ function WallLayer(layer) {
     var rand = this.randomNum(5);
     var sizeRandomness = 0.1*rand*factor*(factor>1? -1 : 1);
     var pos = { x:2500*i, y: 1600*factor*(i%2==0?2:-1), z: 500*factor*(i%2==0?-2:1) };
+    var startPos = { x: pos.x*2, y: pos.y, z: pos.z};
     this.hexesPosition.push(pos);
+    this.hexesStartPosition.push(startPos);
     this.hexes.push(this.createHexagon({
       index:i,
       radius: 1000 + 1000*sizeRandomness,
@@ -45,7 +48,9 @@ function WallLayer(layer) {
       textY: 240
     }
   }));
-  this.hexesPosition.push({ x:2500*(hexLength+0), y:-1300, z:100 });
+  var pos = { x:2500*(hexLength+0), y:-1300, z:100 };
+  this.hexesPosition.push(pos);
+  this.hexesStartPosition.push({ x: pos.x*2, y: pos.y, z: pos.z});
 
   this.hexes.push(this.createHexagon({
     index: hexLength-1,
@@ -58,7 +63,9 @@ function WallLayer(layer) {
       textY: 740
     }
   }));
-  this.hexesPosition.push({ x:2500*(hexLength+1), y:1500, z:100 });
+  pos = { x:2500*(hexLength+1), y:1500, z:100 };
+  this.hexesPosition.push(pos);
+  this.hexesStartPosition.push({ x: pos.x*2, y: pos.y, z: pos.z});
 
   this.hexes.push(this.createHexagon({
     index: hexLength-1,
@@ -71,7 +78,9 @@ function WallLayer(layer) {
       textY: 840
     }
   }));
-  this.hexesPosition.push({ x:2500*(hexLength+2), y:-300, z:100 });
+  pos = { x:2500*(hexLength+2), y:-300, z:100 };
+  this.hexesPosition.push(pos);
+  this.hexesStartPosition.push({ x: pos.x*2, y: pos.y, z: pos.z });
 
   this.hexes[2] = this.hexes.splice(this.hexes.length-2, 1, this.hexes[2])[0];
   this.hexes[5] = this.hexes.splice(this.hexes.length-3, 1, this.hexes[5])[0];
@@ -124,6 +133,9 @@ WallLayer.prototype.createHexagon = function(options) {
   var innerHex = new THREE.Mesh(innerHexGeometry, innerMaterial);
   innerHex.position = pos;
 
+  hex.scale.set(0.001, 0.001, 0.001);
+  innerHex.scale.set(0.001, 0.001, 0.001);
+
   this.scene.add(hex);
   this.scene.add(innerHex);
 
@@ -150,7 +162,6 @@ WallLayer.prototype.generateTextSprite = function(text, bgColor, textOptions) {
   var imgTexture = Loader.loadTexture('/res/text/' + text + '.png', function() {
     ctx.drawImage(imgTexture.image, textX, textY, imgTexture.image.width * 0.3, imgTexture.image.height * 0.3);
 
-    console.log(size*0.4);
     that.updateTextures();
   });
 
@@ -167,8 +178,8 @@ WallLayer.prototype.moveHexagons = function() {
   // If the circlegeometry is not rendered on camera it will sometimes fail
   // Not really sure why this happens, but this is a hackathon - DEAL WITH IT!
   for(var i = 0; i < this.hexes.length; i++) {
-    this.hexes[i].inner.position = this.hexesPosition[i];
-    this.hexes[i].outer.position = this.hexesPosition[i];
+    this.hexes[i].inner.position = this.hexesStartPosition[i];
+    this.hexes[i].outer.position = this.hexesStartPosition[i];
   }
 }
 
@@ -179,7 +190,47 @@ WallLayer.prototype.update = function(frame, relativeFrame) {
   this.camera.position.z = 6000;
   this.camera.position.y = -750;
   this.camera.position.x = relativeFrame*10;
+
+  for(var i = 0; i < this.hexes.length; i++) {
+    var hex = this.hexes[i];
+    var startPos = hex.inner.position;
+    var finishPos = this.hexesPosition[i];
+    var scaleNow = hex.inner.scale;
+    var rot = hex.inner.rotation.z;
+
+    if(hex.inner.x == finishPos.x && hex.inner.y == finishPos.y && hex.inner.z == finishPos.z) {
+      continue;
+    } else {
+      if((finishPos.x - this.camera.position.x) < 3000) {
+        var newPos = new THREE.Vector3(
+            startPos.x + 0.1*(finishPos.x - startPos.x),
+            startPos.y + 0.1*(finishPos.y - startPos.y),
+            startPos.z + 0.1*(finishPos.z - startPos.z)
+          );
+        var newScale = new THREE.Vector3(
+            scaleNow.x + 0.03*(1.0 - scaleNow.x),
+            scaleNow.y + 0.03*(1.0 - scaleNow.y),
+            scaleNow.z + 0.03*(1.0 - scaleNow.z)
+          );
+
+        var newRot = rot + 0.1*(Math.PI*2 - rot);
+        hex.inner.position = newPos.clone();
+        hex.inner.scale.set(newScale.x, newScale.y, newScale.z);
+        hex.inner.rotation.z = newRot;
+        hex.outer.position = newPos.clone();
+        hex.outer.scale.set(newScale.x, newScale.y, newScale.z);
+        hex.outer.rotation.z = newRot;
+      }
+    }
+  }
 };
+
+WallLayer.prototype.start = function() {
+  for(var i = 0; i < this.hexes.length; i++) {
+    this.hexes[i].inner.scale.set(0.001, 0.001, 0.001);
+    this.hexes[i].outer.scale.set(0.001, 0.001, 0.001);
+  }
+}
 
 WallLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
