@@ -3,6 +3,7 @@
  */
 function DesertLayer(layer) {
   this.config = layer.config;
+  window.c = this.config;
 
   this.scene = new THREE.Scene();
   this.cameraController = new CameraController(layer.position);
@@ -84,8 +85,9 @@ function DesertLayer(layer) {
 
   this.initDandelionSeedMaterials();
   this.dandelionSeed = DandelionSeed(this, 0.2);
-  this.dandelionSeed.position.y = 300;
+  this.dandelionSeed.position.copy(this.config.dandelion.start);
   this.scene.add(this.dandelionSeed);
+  window.d = this.dandelionSeed;
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
@@ -111,7 +113,7 @@ DesertLayer.prototype.initSkybox = function() {
 
 DesertLayer.prototype.initDandelionSeedMaterials = function() {
   this.dandelionSeedMaterials = {
-    wing: new THREE.MeshBasicMaterial({color: 0xEEEEEE, opacity: 0.5, transparent: true}),
+    wing: new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.65, transparent: true}),
     body: new THREE.MeshBasicMaterial({
       map: Loader.loadTexture('res/textures/seedBodyTexture.png')
     }),
@@ -154,14 +156,26 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
 };
 
 DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
-  this.dandelionSeed.rotation.x = 0.25 * Math.sin(relativeFrame * 0.0321 + 5);
-  this.dandelionSeed.rotation.y = 0.018 * relativeFrame + 0.15 * Math.sin(relativeFrame * 0.035);
-  this.dandelionSeed.rotation.z = 0.28 * Math.cos(relativeFrame * 0.03);
-
   for (var i = 0; i < this.dandelionSeed.wingCylinders.length; i++) {
     var wingCylinder = this.dandelionSeed.wingCylinders[i];
     wingCylinder.rotation.z = wingCylinder.initialRotation.z + Math.PI / 8 * Math.sin(wingCylinder.rotation.z) * (0.5 + 0.02 * i) * 0.8 * Math.sin(relativeFrame * 0.036);
     wingCylinder.rotation.y = wingCylinder.initialRotation.y + Math.sin(i) * 0.3 * Math.sin(relativeFrame * 0.022);
+  }
+
+  var options = this.config.dandelion;
+  var groundLevel = this.config.waterAmplitude*2+100;
+
+  this.dandelionSeed.position.y = options.start.y + options.speed * relativeFrame;
+  if (this.dandelionSeed.position.y > groundLevel) {
+    var t = relativeFrame / 60 * options.rotationSpeed;
+    this.dandelionSeed.position.x = options.start.x + Math.sin(t) * options.rotationRadius;
+    this.dandelionSeed.position.z = options.start.z + Math.cos(t) * options.rotationRadius;
+
+    this.dandelionSeed.rotation.x = 0.25 * Math.sin(relativeFrame * 0.0321 + 5);
+    this.dandelionSeed.rotation.y = 0.018 * relativeFrame + 0.15 * Math.sin(relativeFrame * 0.035);
+    this.dandelionSeed.rotation.z = 0.28 * Math.cos(relativeFrame * 0.03);
+  } else {
+    this.dandelionSeed.position.y = groundLevel;
   }
 };
 
@@ -188,8 +202,8 @@ function randomBlue() {
 function randomDesertColor() {
   return new THREE.Color(
     1,
-    Math.random() * 0.1 + 0.8,
-    Math.random() * 0.1 + 0.6
+    Math.random() * 0.1 + .75,
+    Math.random() * 0.05 + 0.45
   );
 }
 

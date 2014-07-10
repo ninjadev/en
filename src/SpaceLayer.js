@@ -40,8 +40,6 @@ function SpaceLayer(layer) {
   this.scene.add(this.planet2.object3D);
   this.scene.add(this.planet3.object3D);
   this.scene.add(this.planet4.object3D);
-
-  Loader.start(function(){}, function(){});
 }
 
 SpaceLayer.prototype.update = function(frame, relativeFrame) {
@@ -133,5 +131,4 @@ SpaceLayer.prototype.initSkybox = function() {
   var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
   var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
   this.scene.add(skyBox);
-  Loader.start(function(){}, function(){});
 };

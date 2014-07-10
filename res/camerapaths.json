@@ -4,42 +4,64 @@
       {
         "type": "spline",
         "startFrame": 0,
-        "endFrame": 500,
+        "endFrame": 850,
+        "easing": "smoothstep",
         "points": [
-          [-989.31,4985.34,1790.19],
-          [-1482.62,2452,2973.01],
-          [-546.02,521.76,970.01],
-          [-27.2,112.65,-291.66]
+          [700, 3000, 400],
+          [-300, 400, 100],
+          [-600, 150, -100]
         ]
       },
       {
-        "type": "spline",
-        "startFrame": 2000,
-        "endFrame": 3000,
-        "points": [
-          [0, 500, 100],
-          [0, 400, 200],
-          [0, 400, 500],
-          [1000, 100, 1000]
-        ]
+        "type": "point",
+        "startFrame": 965,
+        "endFrame": 2000,
+        "point": [-2089.05,1432.54,-1451.99]
       }
     ],
     "lookAt": [
       {
-        "type": "point",
+        "type": "spline",
         "startFrame": 0,
-        "endFrame": 500,
-        "point": [164.98,7.58,-769.71]
+        "endFrame": 800,
+        "easing": "smoothstep",
+        "points": [
+          [700, 1350, 0],
+          [-800, 1000, 0],
+          [-800, 100, 0]
+        ]
       },
       {
-        "type": "spline",
-        "startFrame": 1000,
+        "type": "point",
+        "startFrame": 965,
         "endFrame": 2000,
-        "points": [
-          [3742.5, 4.41, 1368.1],
-          [901.38,6.05,133.29],
-          [827.42,24.83,2788.35]
-        ]
+        "point": [912.62,5.89,-232.93]
+      }
+    ],
+    "roll": [
+      {
+        "type": "fixed",
+        "startFrame": 0,
+        "endFrame": 1,
+        "value": 0
+      }
+    ],
+    "fov": [
+      {
+        "type": "transition",
+        "startFrame": 400,
+        "endFrame": 500,
+        "easing": "smoothstep",
+        "from": 45,
+        "to": 28
+      },
+      {
+        "type": "transition",
+        "startFrame": 581,
+        "endFrame": 630,
+        "easing": "smoothstep",
+        "from": 28,
+        "to": 45
       }
     ]
   }

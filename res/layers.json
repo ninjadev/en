@@ -2,11 +2,21 @@
   {
     "type": "DesertLayer",
     "displayName": "Desert",
-    "startFrame": 500,
+    "startFrame": 480,
     "endFrame": 6728,
     "color": "#7ba90f",
     "config": {
-      "waterAmplitude": 5
+      "waterAmplitude": 5,
+      "dandelion": {
+          "start": {
+            "x": -800,
+            "y": 1800,
+            "z": 0
+          },
+          "speed": -2.2,
+          "rotationRadius": 50,
+          "rotationSpeed": 1
+      }
     }
   },
   {
