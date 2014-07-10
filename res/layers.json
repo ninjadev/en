@@ -22,5 +22,15 @@
     "startFrame": 6728,
     "endFrame": 10000,
     "color": "#291c4c"
+  },
+  {
+    "type": "HeatHazeLayer",
+    "displayName": "Heat haze",
+    "startFrame": 2507,
+    "endFrame": 3306,
+    "color": "#1b592f",
+    "config": {
+      "offset": 0
+    }
   }
 ]
