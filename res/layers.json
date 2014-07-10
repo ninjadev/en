@@ -23,13 +23,14 @@
     "startFrame": 0,
     "endFrame": 3000,
     "color": "#59493f"
+  },
   {
     "type": "DesertLayer",
     "dependencies": [
       "VolcanoFactory"
     ],
     "displayName": "Desert",
-    "startFrame": 480,
+    "startFrame": 3000,
     "endFrame": 6728,
     "color": "#7ba90f",
     "config": {
