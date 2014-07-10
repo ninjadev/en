@@ -24,5 +24,5 @@ HeatHazeLayer.prototype.update = function(frame) {
     this.shaderPass.uniforms.height.value = 9 * 8;
     this.shaderPass.uniforms.time.value = frame;
     this.shaderPass.uniforms.amount.value = lerp(0, 0.55, Math.min(Math.min(relativeFrame, endRelativeFrame) / 100, 1));
-    this.shaderPass.uniforms.horizont.value = frame<1500?0.72:0.53;
+    this.shaderPass.uniforms.horizont.value = 0.85;
 };

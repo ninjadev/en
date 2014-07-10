@@ -26,12 +26,11 @@
   {
     "type": "HeatHazeLayer",
     "displayName": "Heat haze",
-    "startFrame": 988,
-    "endFrame": 2278,
+    "startFrame": 2507,
+    "endFrame": 3306,
     "color": "#1b592f",
     "config": {
       "offset": 0
     }
   }
 ]
-
