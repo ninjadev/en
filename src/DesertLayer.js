@@ -80,7 +80,11 @@ function DesertLayer(layer) {
   this.waterBorder.rotation.z = Math.PI/3;
   this.scene.add(this.waterBorder);
 
-  this.initSkybox();
+  this.skyBox = this.createSkybox('res/skyboxes/dunes_');
+  this.scene.add(this.skyBox);
+  this.doomSkyBox = this.createSkybox('res/skyboxes/dunes_doom_');
+  this.doomSkyBox.scale.set(0.99, 0.99, 0.99);
+  this.scene.add(this.doomSkyBox);
 
   this.initDandelionSeedMaterials();
   this.dandelionSeed = DandelionSeed(this, 0.2);
@@ -90,8 +94,7 @@ function DesertLayer(layer) {
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
 
-DesertLayer.prototype.initSkybox = function() {
-  var imagePrefix = "res/skyboxes/dunes_";
+DesertLayer.prototype.createSkybox = function(imagePrefix) {
   var directions  = ["right", "left", "top", "bottom", "front", "back"];
   var imageSuffix = ".jpg";
   var skyGeometry = new THREE.BoxGeometry(15000, 15000, 15000);
@@ -100,13 +103,14 @@ DesertLayer.prototype.initSkybox = function() {
   for (var i = 0; i < 6; i++) {
     materialArray.push(new THREE.MeshBasicMaterial({
       map: Loader.loadTexture(imagePrefix + directions[i] + imageSuffix),
-      side: THREE.BackSide
+      side: THREE.BackSide,
+      transparent: true
     }));
   }
   var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
   var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
   skyBox.position.y = 1500;//+this.config.waterAmplitude*2;
-  this.scene.add(skyBox);
+  return skyBox;
 };
 
 DesertLayer.prototype.initDandelionSeedMaterials = function() {
@@ -151,6 +155,11 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
 
   //TODO: don't update dandelion seed when it is not in sight
   this.updateDandelionSeed(frame, relativeFrame);
+
+  for(var i = 0; i < this.doomSkyBox.material.materials.length; i++) {
+    var material = this.doomSkyBox.material.materials[i];
+    material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
+  }
 };
 
 DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
