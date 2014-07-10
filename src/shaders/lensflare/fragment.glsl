@@ -82,7 +82,7 @@ vec3 cc(vec3 color, float factor,float factor2) // color modifier
 void main(void)
 {
     //vec2 uv = gl_FragCoord.xy / vec2(width,height) - 0.5;
-    vec2 uv = vec2(vUv);
+    vec2 uv = vec2(vUv)-.5;
     //vec2 uv = gl_FragCoord.xy / iResolution.xy - 0.5;
     uv.x *= width/height; //fix aspect ratio
     vec3 mouse = vec3(.5,.5,.5);
@@ -90,12 +90,14 @@ void main(void)
     //mouse.x *= iResolution.x/iResolution.y; //fix aspect ratio
     //if (iMouse.z<.5)
     //{
-    //    mouse.x=sin(iGlobalTime)*.5;
-    //    mouse.y=sin(iGlobalTime*.913)*.5;
+    mouse.x=sin(time*0.01)*.5;
+    mouse.y=sin(time*0.01)*.5;
     //}
 
     vec3 color = vec3(1.4,1.2,1.0)*lensflare(uv,mouse.xy);
     color -= noise(gl_FragCoord.xy)*.015;
     color = cc(color,.5,.1);
-    gl_FragColor = vec4(color,1.0);
+    //gl_FragColor = vec4(color,1.0);
+    vec4 img = texture2D(tDiffuse, vec2(vUv.x, vUv.y)) + vec4(color,1.0);
+    gl_FragColor = img;
 }
