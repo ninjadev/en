@@ -74,6 +74,36 @@
         "from": 28,
         "to": 45
       }
+    ],
+    "shake": [
+      {
+        "type": "transition",
+        "startFrame": 3900,
+        "endFrame": 3950,
+        "from": 0,
+        "to": 20
+      },
+      {
+        "type": "transition",
+        "startFrame": 4100,
+        "endFrame": 4600,
+        "from": 20,
+        "to": 8
+      },
+      {
+        "type": "transition",
+        "startFrame": 5800,
+        "endFrame": 6000,
+        "from": 8,
+        "to": 16
+      },
+      {
+        "type": "transition",
+        "startFrame": 6200,
+        "endFrame": 6240,
+        "from": 16,
+        "to": 0
+      }
     ]
   },
   {},
