@@ -19,6 +19,11 @@
         "speed": -2.2,
         "rotationRadius": 50,
         "rotationSpeed": 1
+      },
+      "grass": {
+        "startGrowthFrame": 1200,
+        "endGrowthFrame": 1600,
+        "windyUntilFrame": 4000
       }
     }
   },
