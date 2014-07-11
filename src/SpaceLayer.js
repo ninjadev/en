@@ -111,7 +111,7 @@ SpaceLayer.prototype.createPlanet = function(map, normalMap) {
 }
 
 SpaceLayer.prototype.initSkybox = function() {
-  var imagePrefix = "/res/skyboxes/space-";
+  var imagePrefix = "res/skyboxes/space-";
   var directions  = [
     "pos-x",
     "neg-x",
