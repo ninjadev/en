@@ -6,6 +6,10 @@ function WallLayer(layer) {
   this.layer = layer;
   this.scene = new THREE.Scene();
   this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 1, 10000);
+  this.cameraZ = 8000;
+  this.cameraY = -750;
+  this.camera.position.z = this.cameraZ;
+  this.camera.position.y = this.cameraY;
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.fontLoaded = false;
 
@@ -44,28 +48,13 @@ function WallLayer(layer) {
     color: '#473517',
     text: "ninjadev",
     textOptions: {
-      textX: 500,
-      textY: 240
+      textX: 170,
+      textY: 580
     }
   }));
   var pos = { x:2500*(hexLength+0), y:-1300, z:100 };
   this.hexesPosition.push(pos);
-  this.hexesStartPosition.push({ x: pos.x*2, y: pos.y, z: pos.z});
-
-  this.hexes.push(this.createHexagon({
-    index: hexLength-1,
-    radius: 1500,
-    color: '#472823',
-    position: {x:0, y:0, z:0},
-    text: "solskogen",
-    textOptions: {
-      textX: 500,
-      textY: 740
-    }
-  }));
-  pos = { x:2500*(hexLength+1), y:1500, z:100 };
-  this.hexesPosition.push(pos);
-  this.hexesStartPosition.push({ x: pos.x*2, y: pos.y, z: pos.z});
+  this.hexesStartPosition.push({ x: pos.x*1.5, y: pos.y, z: pos.z});
 
   this.hexes.push(this.createHexagon({
     index: hexLength-1,
@@ -74,16 +63,30 @@ function WallLayer(layer) {
     color: '#472D01',
     text: "inakuwa",
     textOptions: {
-      textX: 300,
-      textY: 840
+      textX: 100,
+      textY: 480
     }
   }));
-  pos = { x:2500*(hexLength+2), y:-300, z:100 };
+  pos = { x:2500*(hexLength+1), y:-300, z:100 };
   this.hexesPosition.push(pos);
-  this.hexesStartPosition.push({ x: pos.x*2, y: pos.y, z: pos.z });
+  this.hexesStartPosition.push({ x: pos.x*1.5, y: pos.y, z: pos.z });
 
-  this.hexes[2] = this.hexes.splice(this.hexes.length-2, 1, this.hexes[2])[0];
-  this.hexes[5] = this.hexes.splice(this.hexes.length-3, 1, this.hexes[5])[0];
+  this.hexes.push(this.createHexagon({
+    index: hexLength-1,
+    radius: 1500,
+    position: {x:0, y:0, z:0},
+    color: '#1c6ba0',
+    text: "no-picture",
+    textOptions: {
+      textX: 100,
+      textY: 480
+    }
+  }));
+  pos = { x:2500*(hexLength+3), y:-300, z:100 };
+  this.hexesPosition.push(pos);
+  this.hexesStartPosition.push({ x: pos.x*1.5, y: pos.y, z: pos.z });
+
+  this.hexes[0] = this.hexes.splice(this.hexes.length-3, 1, this.hexes[0])[0];
 
   this.scene.add(this.background); 
   this.scene.add(new THREE.AmbientLight(0x222222));
@@ -158,12 +161,14 @@ WallLayer.prototype.generateTextSprite = function(text, bgColor, textOptions) {
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, size, size);
 
-  var that = this;
-  var imgTexture = Loader.loadTexture('/res/text/' + text + '.png', function() {
-    ctx.drawImage(imgTexture.image, textX, textY, imgTexture.image.width * 0.3, imgTexture.image.height * 0.3);
+  if(text !== "no-picture") {
+    var that = this;
+    var imgTexture = Loader.loadTexture('/res/text/' + text + '.png', function() {
+      ctx.drawImage(imgTexture.image, textX, textY, imgTexture.image.width*0.9, imgTexture.image.height*0.9);
 
-    that.updateTextures();
-  });
+      that.updateTextures();
+    });
+  }
 
   return canvas;
 }
@@ -187,9 +192,35 @@ WallLayer.prototype.update = function(frame, relativeFrame) {
   if(relativeFrame == 1) {
     this.moveHexagons();
   }
-  this.camera.position.z = 6000;
-  this.camera.position.y = -750;
-  this.camera.position.x = relativeFrame*10;
+  if(relativeFrame < 440) {
+    return;
+  }
+
+  if(relativeFrame > 650 && relativeFrame <= 1100) {
+    this.camera.position.x = (relativeFrame - 650)*15;
+  }
+
+  if(relativeFrame > 440 && relativeFrame < 650) {
+    this.camera.position.z = smoothstep(this.cameraZ, 3800, (relativeFrame - 440)/100);
+    this.camera.position.y = smoothstep(this.cameraY, 200, (relativeFrame - 440)/100);
+  }
+
+  window.camera = this.camera;
+  if(relativeFrame > 650 && relativeFrame < 850) {
+    this.camera.position.z = smoothstep(3800, this.cameraZ, (relativeFrame - 650)/100);
+    this.camera.position.y = smoothstep(200, this.cameraY, (relativeFrame - 650)/100);
+  }
+
+  if(relativeFrame > 1000 && relativeFrame < 1300) {
+    this.camera.position.z = smoothstep(this.cameraZ, 3800, (relativeFrame - 1000)/100);
+    this.camera.position.y = smoothstep(this.cameraY, -260, (relativeFrame - 1000)/100);
+    this.camera.position.x = smoothstep(5250, 10000, (relativeFrame - 1000)/100);
+  }
+
+  if(relativeFrame > 1300) {
+    this.camera.position.z = smoothstep(3800, 1500, (relativeFrame - 1300)/100);
+    this.camera.position.x = smoothstep(10000, 15000, (relativeFrame - 1300)/100);
+  }
 
   for(var i = 0; i < this.hexes.length; i++) {
     var hex = this.hexes[i];
