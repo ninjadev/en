@@ -24,17 +24,17 @@ function SpaceLayer(layer) {
   this.initSkybox();
 
   this.planet1 = this.createPlanet(
-    Loader.loadTexture('/res/textures/planet1.jpg'),
-    Loader.loadTexture('/res/textures/planet1-normalmap.jpg'));
+    Loader.loadTexture('res/textures/planet1-outracks.jpg'),
+    Loader.loadTexture('res/textures/planet1-outracks-normalmap.jpg'));
   this.planet2 = this.createPlanet(
-    Loader.loadTexture('/res/textures/planet2.jpg'),
-    Loader.loadTexture('/res/textures/planet2-normalmap.jpg'));
+    Loader.loadTexture('res/textures/planet2-mrdoob.jpg'),
+    Loader.loadTexture('res/textures/planet2-mrdoob-normalmap.jpg'));
   this.planet3 = this.createPlanet(
-    Loader.loadTexture('/res/textures/planet3.jpg'),
-    Loader.loadTexture('/res/textures/planet3-normalmap.jpg'));
+    Loader.loadTexture('res/textures/planet3-solskogen.jpg'),
+    Loader.loadTexture('res/textures/planet3-solskogen-normalmap.jpg'));
   this.planet4 = this.createPlanet(
-    Loader.loadTexture('/res/textures/planet4.jpg'),
-    Loader.loadTexture('/res/textures/planet4-normalmap.jpg'));
+    Loader.loadTexture('res/textures/planet5-pandacube.jpg'),
+    Loader.loadTexture('res/textures/planet5-pandacube-normalmap.jpg'));
 
   this.scene.add(this.planet1.object3D);
   this.scene.add(this.planet2.object3D);
@@ -43,16 +43,16 @@ function SpaceLayer(layer) {
 }
 
 SpaceLayer.prototype.update = function(frame, relativeFrame) {
-  this.planet1.planetMesh.rotation.x = relativeFrame / 167 / 2;
+  this.planet1.planetMesh.rotation.y = relativeFrame / 167 / 2;
   this.planet1.object3D.position.set(250, 150, -200);
 
-  this.planet2.planetMesh.rotation.x = relativeFrame / 142 / 2;
+  this.planet2.planetMesh.rotation.y = relativeFrame / 142 / 2;
   this.planet2.object3D.position.set(-150, -150, 300);
 
-  this.planet3.planetMesh.rotation.x = relativeFrame / 112 / 2;
+  this.planet3.planetMesh.rotation.y = relativeFrame / 112 / 2;
   this.planet3.object3D.position.set(150, -150, -100);
 
-  this.planet4.planetMesh.rotation.x = relativeFrame / 124 / 2;
+  this.planet4.planetMesh.rotation.y = relativeFrame / 124 / 2;
   this.planet4.object3D.position.set(-250, 150, 100);
 
   this.planet1.update();
