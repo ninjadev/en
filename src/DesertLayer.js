@@ -265,7 +265,7 @@ DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
       var offset = 0.01 * this.grass.growthDuration * i;
       var t = (relativeFrame - this.config.grass.startGrowthFrame - offset) / this.grass.growthDuration;
       grass.position.y = smoothstep(this.grass.startY, this.grass.targetY, t);
-      var scale = smoothstep(0, grass.initScale, t - 0.25);
+      var scale = smoothstep(0.01, grass.initScale, t - 0.25);
       grass.scale.set(scale, scale, scale);
     }
   }
