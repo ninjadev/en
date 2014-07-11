@@ -17,6 +17,17 @@
         "startFrame": 965,
         "endFrame": 2000,
         "point": [-2089.05,1432.54,-1451.99]
+      },
+      {
+        "type": "spline",
+        "startFrame": 6000,
+        "endFrame": 6248,
+        "easing": "smoothstep",
+        "points": [
+          [-2089.05,1432.54,-1451.99],
+          [-3540.06,4947.6,-2041.29],
+          [-3796.56,9868.74,-2145.46]
+        ]
       }
     ],
     "lookAt": [
@@ -62,6 +73,39 @@
         "easing": "smoothstep",
         "from": 28,
         "to": 45
+      }
+    ]
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  {
+    "position": [
+      {
+        "type": "point",
+        "startFrame": 0,
+        "endFrame": 199,
+        "point": [0,0,0]
+      },
+      {
+        "type": "spline",
+        "startFrame": 200,
+        "endFrame": 400,
+        "points": [
+          [0,0,-39.77],
+          [0,-32.57,847.91],
+          [0,-32.57,2998.12]
+        ]
+      }
+    ],
+    "lookAt": [
+      {
+        "type": "point",
+        "startFrame": 0,
+        "endFrame": 400,
+        "point": [0, 0, 0]
       }
     ]
   }

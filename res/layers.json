@@ -8,14 +8,14 @@
     "config": {
       "waterAmplitude": 5,
       "dandelion": {
-          "start": {
-            "x": -800,
-            "y": 1800,
-            "z": 0
-          },
-          "speed": -2.2,
-          "rotationRadius": 50,
-          "rotationSpeed": 1
+        "start": {
+          "x": -800,
+          "y": 1800,
+          "z": 0
+        },
+        "speed": -2.2,
+        "rotationRadius": 50,
+        "rotationSpeed": 1
       }
     }
   },
@@ -52,6 +52,19 @@
     "config": {
       "offset": 0
     }
+  },
+  {
+    "type": "MultiplyLayer",
+    "displayName": "Multiply",
+    "startFrame": 6400,
+    "endFrame": 6800,
+    "color": "#15ec54"
+  },
+  {
+    "type": "CloudLayer",
+    "displayName": "Cloud",
+    "startFrame": 6400,
+    "endFrame": 6800,
+    "color": "#15ec54"
   }
 ]
-
