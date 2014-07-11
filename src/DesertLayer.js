@@ -10,6 +10,15 @@ function DesertLayer(layer) {
   this.camera = this.cameraController.camera;
   this.scene.add(this.camera);
 
+  var volcanoFactory = new VolcanoFactory( this.scene );
+  this.volcano = volcanoFactory.create(
+    new THREE.Vector3( 920.5, -5,-272.03 ),
+    28, // Base scale
+    100, // Max lava ball size
+    120, // Number of lava balls
+    false // Party mode
+    );
+
   this.waterHexes = [];
 
   this.waterPond = new THREE.Object3D();
@@ -143,6 +152,14 @@ DesertLayer.prototype.render = function(renderer, interpolation) {
 
 DesertLayer.prototype.update = function(frame, relativeFrame) {
   this.cameraController.updateCamera(relativeFrame);
+
+  if (frame < 4400) {
+    this.scene.remove(this.volcano);
+  } else if (frame > 4400) {
+    this.scene.add(this.volcano);
+    this.volcano.update( frame - 4600 );
+    this.volcano.position.y = clamp(-10, -10 + (frame - 4400) / 27, 20);
+  }
 
   for (var i = 0; i < this.waterHexes.length; i++) {
     var hex = this.waterHexes[i];
