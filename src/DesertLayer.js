@@ -199,18 +199,18 @@ DesertLayer.prototype.initSmokeColumns = function() {
   });
 }
 
-DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame) {
+DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame,imgScale,radiusRange,totalParticles) {
 
   this.smokeColumns.push( new THREE.Object3D() );
   var smokeColumn = this.smokeColumns[this.smokeColumns.length-1];
 
   smokeColumn.particleAttributes = { startSize: [], startPosition: [], randomness: [] };
 
-  var totalParticles = 40;
-  var radiusRange = 40;
+  var totalParticles = 4;
+  var radiusRange = 90;
   for(var i=0; i < totalParticles; i++) {
     smokeColumn.add(new THREE.Sprite(this.spriteMaterial));
-    smokeColumn.children[i].scale.set(64, 64, 1.0); // imageWidth, imageHeight
+    smokeColumn.children[i].scale.set(imgScale, imgScale, 1.0); // imageWidth, imageHeight
     smokeColumn.children[i].position.set(
         Math.random() - 0.5,
         Math.random() - 0.5,
@@ -232,7 +232,7 @@ DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame) {
 
 DesertLayer.prototype.updateSmoke = function(frame) {
   for(var i=0;i<this.smokeColumns.length; i++) {
-    if(frame-this.smokeBirthTimes[i]>240) {
+    if(frame-this.smokeBirthTimes[i]>240 || frame-this.smokeBirthTimes[i]<-1) {
       console.log(this.smokeColumns);
       this.scene.remove(this.smokeColumns[i]);
       delete this.smokeColumns[i];
@@ -251,9 +251,10 @@ DesertLayer.prototype.updateSmokeColumn = function(updateParticleGroup, age, fra
     var attributes = updateParticleGroup.particleAttributes;
     var a = attributes.randomness[c] + 1;
     var pulseFactor = Math.sin(a * 0.01 * frame * 1000 / 60) * 0.1 + 0.9;
-    particle.position.x = attributes.startPosition[c].x * pulseFactor;
+    var downscaling = 1 -  (frame - this.smokeBirthTimes[age] + 1) / 200;
+    particle.position.x = attributes.startPosition[c].x * pulseFactor * downscaling;
     particle.position.y = attributes.startPosition[c].y * pulseFactor + (frame - this.smokeBirthTimes[age]);
-    particle.position.z = attributes.startPosition[c].z * pulseFactor;
+    particle.position.z = attributes.startPosition[c].z * pulseFactor * downscaling;
   }
 
   updateParticleGroup.rotation.y = frame * 1000 / 60 * 0.00075;
@@ -311,12 +312,15 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
     material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
   }
 
-  if(frame%90==0) {
+  if(frame%1==0) {
     this.addSmokeColumn( 
         this.dandelionSeed.position.x,
         this.dandelionSeed.position.y,
         this.dandelionSeed.position.z,
-        frame
+        frame,
+        64,
+        40,
+        4
     );
 
     console.log(this.dandelionSeed.position)
