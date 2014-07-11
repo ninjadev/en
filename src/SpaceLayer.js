@@ -27,6 +27,9 @@ function SpaceLayer(layer) {
   this.initMilkyWay();
   this.initTrain();
 
+  this.planetX = this.createPlanet(
+    Loader.loadTexture('res/textures/planetX-earth.jpg'),
+    Loader.loadTexture('res/textures/planetX-earth-normalmap.jpg'));
   this.planet1 = this.createPlanet(
     Loader.loadTexture('res/textures/planet1-outracks.jpg'),
     Loader.loadTexture('res/textures/planet1-outracks-normalmap.jpg'));
@@ -40,6 +43,7 @@ function SpaceLayer(layer) {
     Loader.loadTexture('res/textures/planet5-pandacube.jpg'),
     Loader.loadTexture('res/textures/planet5-pandacube-normalmap.jpg'));
 
+  this.scene.add(this.planetX.object3D);
   this.scene.add(this.planet1.object3D);
   this.scene.add(this.planet2.object3D);
   this.scene.add(this.planet3.object3D);
@@ -47,22 +51,26 @@ function SpaceLayer(layer) {
 }
 
 SpaceLayer.prototype.update = function(frame, relativeFrame) {
+  this.planetX.planetMesh.rotation.y = relativeFrame / 118 / 2;
+  this.planetX.object3D.position.set(0, 0, 0);
+
   this.planet1.planetMesh.rotation.y = relativeFrame / 167 / 2;
-  this.planet1.object3D.position.set(250, 150, -200);
+  this.planet1.object3D.position.set(4000, 150, -200);
 
   this.planet2.planetMesh.rotation.y = relativeFrame / 142 / 2;
-  this.planet2.object3D.position.set(-150, -150, 300);
+  this.planet2.object3D.position.set(-3500, 1500, 300);
 
   this.planet3.planetMesh.rotation.y = relativeFrame / 112 / 2;
-  this.planet3.object3D.position.set(150, -150, -100);
+  this.planet3.object3D.position.set(150, -1500, -100);
 
   this.planet4.planetMesh.rotation.y = relativeFrame / 124 / 2;
-  this.planet4.object3D.position.set(-250, 150, 100);
+  this.planet4.object3D.position.set(1000, 1500, 1000);
 
+  this.planetX.update();
   this.planet1.update();
   this.planet2.update();
-  this.planet4.update();
   this.planet3.update();
+  this.planet4.update();
 
   this.milkyWay.rotation.z = - relativeFrame / 66 / 4;
 
