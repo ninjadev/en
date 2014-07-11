@@ -7,18 +7,14 @@
     "color": "#1b592f",
     "config": {
         "hexColor" : [
-            {"outer": "0x967117", "inner": "0xf4a460"},
-            {"outer": "0x967117", "inner": "0xc2b280"},
-            {"outer": "0x967117", "inner": "0xe48400"}
+            {"outer": "0xfebd01", "inner": "#febd01"},
+            {"outer": "0xfddeaf", "inner": "#fddeaf"},
+            {"outer": "0xe6a5ab", "inner": "#e6a5ab"},
+            {"outer": "0x6a514a", "inner": "#6a514a"},
+            {"outer": "0xff6646", "inner": "#ff6646"},
+            {"outer": "0x33c3ff", "inner": "#33c3ff"}
         ]
     }
-  },
-  {
-    "type": "GlowFXLayer",
-    "displayName": "Intro.GlowLayer",
-    "startFrame": 0,
-    "endFrame": 1442,
-    "color": "#59493f"
   },
   {
     "type": "FadeInLayer",
@@ -78,7 +74,7 @@
   {
     "type": "BloomLayer",
     "displayName": "Desert bloom",
-    "startFrame": 616,
+    "startFrame": 1443,
     "endFrame": 6728,
     "color": "#291c4c",
     "config": {
@@ -132,14 +128,14 @@
   {
     "type": "CubicLensDistortionLayer",
     "displayName": "Lens distortion",
-    "startFrame": 713,
+    "startFrame": 1443,
     "endFrame": 9823,
     "color": "#4dba98"
   },
   {
     "type": "VignetteLayer",
     "displayName": "Vignette",
-    "startFrame": 821,
+    "startFrame": 1443,
     "endFrame": 9823,
     "color": "#606882"
   }

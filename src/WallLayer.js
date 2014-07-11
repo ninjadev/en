@@ -17,82 +17,57 @@ function WallLayer(layer) {
   this.hexesStartPosition = [];
   this.hexesPosition = [];
   this.textures = [];
+  this.pictures = [
+    { name: "ninjadev", picOptions: { picX: 170, picY: 580 } },
+    { name: "solskogen", picOptions: { picX: 100, picY: 520 } },
+    { name: "presents", picOptions: { picX: 170, picY: 580 } },
+    { name: "a-demo-called", picOptions: { picX: 110, picY: 500 } },
+    { name: "inakuwa", picOptions: { picX: 110, picY: 490 } },
+    { name: "no-picture", picOptions: { picX: 0, picY: 0 } }
+  ];
 
+  var backgroundTexture = Loader.loadTexture('res/wallpaper.png');
+  backgroundTexture.wrapS = backgroundTexture.wrapT = THREE.RepeatWrapping;
+  backgroundTexture.repeat.set(100,100);
   var backgroundGeometry = new THREE.PlaneGeometry(100000, 100000);
   this.background = new THREE.Mesh(
     backgroundGeometry,
-    new THREE.MeshLambertMaterial({
-      color: 0xdbd5c9
+    new THREE.MeshBasicMaterial({
+      map: backgroundTexture
     }));
 
   var hexLength = this.layer.config.hexColor.length;
   for(var i = 0; i < hexLength; i++) {
     var factor = i % 2;
     var rand = this.randomNum(5);
-    var sizeRandomness = 0.1*rand*factor*(factor>1? -1 : 1);
-    var pos = { x:2500*i, y: 1600*factor*(i%2==0?2:-1), z: 500*factor*(i%2==0?-2:1) };
+    if(i == 0 || i == 1) {
+      var sizeRandomness = 0.35 - 0.15*i;
+    } else {
+      var sizeRandomness = 0.1*rand*factor*(factor>1? -1 : 1);
+    }
+    if(i == hexLength-1) {
+      var pos = { x:2500*(i+1), y: -260, z: 500*factor*(i%2==0?-2:1) };
+    } else {
+      var pos = { x:2500*i, y: 1600*factor*(i%2==0?2:-1), z: 500*factor*(i%2==0?-2:1) };
+    }
     var startPos = { x: pos.x*2, y: pos.y, z: pos.z};
     this.hexesPosition.push(pos);
     this.hexesStartPosition.push(startPos);
     this.hexes.push(this.createHexagon({
       index:i,
       radius: 1000 + 1000*sizeRandomness,
-      position: {x:0, y:0, z:0 }
+      position: {x:0, y:0, z:0 },
+      color: this.layer.config.hexColor[i].inner,
+      pic: this.pictures[i].name,
+      picOptions: this.pictures[i].picOptions
     }));
   }
-
-  this.hexes.push(this.createHexagon({
-    index: hexLength-1,
-    radius: 1500,
-    position: {x:0, y:0, z:0},
-    color: '#473517',
-    text: "ninjadev",
-    textOptions: {
-      textX: 170,
-      textY: 580
-    }
-  }));
-  var pos = { x:2500*(hexLength+0), y:-1300, z:100 };
-  this.hexesPosition.push(pos);
-  this.hexesStartPosition.push({ x: pos.x*1.5, y: pos.y, z: pos.z});
-
-  this.hexes.push(this.createHexagon({
-    index: hexLength-1,
-    radius: 1500,
-    position: {x:0, y:0, z:0},
-    color: '#472D01',
-    text: "inakuwa",
-    textOptions: {
-      textX: 100,
-      textY: 480
-    }
-  }));
-  pos = { x:2500*(hexLength+1), y:-300, z:100 };
-  this.hexesPosition.push(pos);
-  this.hexesStartPosition.push({ x: pos.x*1.5, y: pos.y, z: pos.z });
-
-  this.hexes.push(this.createHexagon({
-    index: hexLength-1,
-    radius: 1500,
-    position: {x:0, y:0, z:0},
-    color: '#1c6ba0',
-    text: "no-picture",
-    textOptions: {
-      textX: 100,
-      textY: 480
-    }
-  }));
-  pos = { x:2500*(hexLength+3), y:-300, z:100 };
-  this.hexesPosition.push(pos);
-  this.hexesStartPosition.push({ x: pos.x*1.5, y: pos.y, z: pos.z });
-
-  this.hexes[0] = this.hexes.splice(this.hexes.length-3, 1, this.hexes[0])[0];
 
   this.scene.add(this.background); 
   this.scene.add(new THREE.AmbientLight(0x222222));
 
   var light = new THREE.PointLight(0xffffff, 1, 1000);
-  light.position.set(500, 500, 500);
+  light.position.set(50, 50, 50);
   this.scene.add(light);
   var pointLight = new THREE.PointLight(0xFFFFFF);
   pointLight.position.x = 100;
@@ -115,12 +90,16 @@ WallLayer.prototype.createHexagon = function(options) {
   hex.position = pos;
 
   var innerHexGeometry = new THREE.CircleGeometry(options.radius || 1000,  6);
-  var isText = options.text !== undefined;
+  var isText = options.pic !== undefined;
 
   if(isText) {
-    var texture = new THREE.Texture(
-        this.generateTextSprite(options.text, options.color, options.textOptions)
-      );
+    if(options.pic == "honey" || options.pic == "tunl") {
+      var texture = Loader.loadTexture('res/pic/' + options.pic + '.png');
+    } else {
+      var texture = new THREE.Texture(
+          this.generateTextSprite(options.pic, options.color, options.picOptions)
+        );
+    }
     this.textures.push(texture);
     var innerMaterial = new THREE.MeshBasicMaterial({
       map: texture
@@ -149,11 +128,11 @@ WallLayer.prototype.randomNum = function(threshold) {
   return Math.floor((Math.random() * threshold) + 1);
 }
 
-WallLayer.prototype.generateTextSprite = function(text, bgColor, textOptions) {
+WallLayer.prototype.generateTextSprite = function(pic, bgColor, picOptions) {
   var canvas = document.createElement('canvas');
-  var size = textOptions.size || 2048;
-  var textX = textOptions.textX || 819;
-  var textY = textOptions.textY || 819;
+  var size = picOptions.size || 2048;
+  var picX = picOptions.picX || 819;
+  var picY = picOptions.picY || 819;
   canvas.width = size;
   canvas.height = size;
 
@@ -161,11 +140,10 @@ WallLayer.prototype.generateTextSprite = function(text, bgColor, textOptions) {
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, size, size);
 
-  if(text !== "no-picture") {
+  if(pic !== "no-picture") {
     var that = this;
-    var imgTexture = Loader.loadTexture('/res/text/' + text + '.png', function() {
-      ctx.drawImage(imgTexture.image, textX, textY, imgTexture.image.width*0.9, imgTexture.image.height*0.9);
-
+    var imgTexture = Loader.loadTexture('res/pic/' + pic + '.png', function() {
+      ctx.drawImage(imgTexture.image, picX, picY, imgTexture.image.width*0.9, imgTexture.image.height*0.9);
       that.updateTextures();
     });
   }
@@ -196,7 +174,7 @@ WallLayer.prototype.update = function(frame, relativeFrame) {
     return;
   }
 
-  if(relativeFrame > 650 && relativeFrame <= 1100) {
+  if(relativeFrame > 650 && relativeFrame <= 1150) {
     this.camera.position.x = (relativeFrame - 650)*15;
   }
 
@@ -205,20 +183,20 @@ WallLayer.prototype.update = function(frame, relativeFrame) {
     this.camera.position.y = smoothstep(this.cameraY, 200, (relativeFrame - 440)/100);
   }
 
-  window.camera = this.camera;
   if(relativeFrame > 650 && relativeFrame < 850) {
     this.camera.position.z = smoothstep(3800, this.cameraZ, (relativeFrame - 650)/100);
     this.camera.position.y = smoothstep(200, this.cameraY, (relativeFrame - 650)/100);
   }
 
   if(relativeFrame > 1000 && relativeFrame < 1300) {
-    this.camera.position.z = smoothstep(this.cameraZ, 3800, (relativeFrame - 1000)/100);
-    this.camera.position.y = smoothstep(this.cameraY, -260, (relativeFrame - 1000)/100);
+    this.camera.position.z = smoothstep(this.cameraZ, 1800, (relativeFrame - 1000)/100);
+    this.camera.position.y = smoothstep(this.cameraY, 1, (relativeFrame - 1000)/100);
     this.camera.position.x = smoothstep(5250, 10000, (relativeFrame - 1000)/100);
   }
 
   if(relativeFrame > 1300) {
-    this.camera.position.z = smoothstep(3800, 1500, (relativeFrame - 1300)/100);
+    this.camera.position.z = smoothstep(1800, 1500, (relativeFrame - 1300)/100);
+    this.camera.position.y = smoothstep(1, -260, (relativeFrame - 1300)/100);
     this.camera.position.x = smoothstep(10000, 15000, (relativeFrame - 1300)/100);
   }
 
@@ -255,13 +233,6 @@ WallLayer.prototype.update = function(frame, relativeFrame) {
     }
   }
 };
-
-WallLayer.prototype.start = function() {
-  for(var i = 0; i < this.hexes.length; i++) {
-    this.hexes[i].inner.scale.set(0.001, 0.001, 0.001);
-    this.hexes[i].outer.scale.set(0.001, 0.001, 0.001);
-  }
-}
 
 WallLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
