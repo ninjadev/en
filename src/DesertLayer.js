@@ -9,6 +9,28 @@ function DesertLayer(layer) {
   this.camera = this.cameraController.camera;
   this.scene.add(this.camera);
 
+  this.WATER_CENTER_X = 900;
+  this.WATER_CENTER_Z = -300;
+
+  //light
+  this.ambientLight = new THREE.AmbientLight(0x555555);
+  this.light1 = new THREE.PointLight(0xFFEAC3, .7);
+  this.light2 = new THREE.PointLight(0xFFEAC3, .4);
+  this.light3 = new THREE.PointLight(0xFFEAC3, .4);
+  this.light4 = new THREE.PointLight(0xFFEAC3, .4);
+  this.light5 = new THREE.PointLight(0xFFEAC3, .4);
+  this.light1.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z);
+  this.light2.position = new THREE.Vector3(this.WATER_CENTER_X + 1500, 1000, this.WATER_CENTER_Z);
+  this.light3.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z + 1500);
+  this.light4.position = new THREE.Vector3(this.WATER_CENTER_X - 1500, 1000, this.WATER_CENTER_Z);
+  this.light5.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z - 1500);
+  this.scene.add(this.ambientLight);
+  this.scene.add(this.light1);
+  this.scene.add(this.light2);
+  this.scene.add(this.light3);
+  this.scene.add(this.light4);
+  this.scene.add(this.light5);
+
   var volcanoFactory = new VolcanoFactory( this.scene );
   this.volcano = volcanoFactory.create(
     new THREE.Vector3( 920.5, -5,-272.03 ),
@@ -17,11 +39,6 @@ function DesertLayer(layer) {
     120, // Number of lava balls
     false // Party mode
     );
-
-  this.light1 = new THREE.DirectionalLight();
-  this.light1.position.set(-1000, -1000, 1000);
-  this.scene.add(this.light1);
-  this.scene.add(new THREE.AmbientLight(0x222222));
 
   this.waterHexes = [];
 
@@ -53,8 +70,8 @@ function DesertLayer(layer) {
   this.waterBG.rotation.x = -Math.PI/2;
   this.waterPond.add(this.waterBG);
 
-  this.waterPond.position.x = 900;
-  this.waterPond.position.z = -300;
+  this.waterPond.position.x = this.WATER_CENTER_X;
+  this.waterPond.position.z = this.WATER_CENTER_Z;
   this.waterPond.rotation.y = Math.PI/3;
   this.scene.add(this.waterPond);
 
@@ -89,8 +106,8 @@ function DesertLayer(layer) {
   });
 
   this.waterBorder = new THREE.Mesh(waterBorderGeo, waterBorderMat);
-  this.waterBorder.position.x = 900;
-  this.waterBorder.position.z = -300;
+  this.waterBorder.position.x = this.WATER_CENTER_X;
+  this.waterBorder.position.z = this.WATER_CENTER_Z;
   this.waterBorder.position.y = this.config.waterAmplitude*2+2;
   this.waterBorder.rotation.x = -Math.PI/2;
   this.waterBorder.rotation.z = Math.PI/3;
@@ -108,6 +125,7 @@ function DesertLayer(layer) {
   this.scene.add(this.dandelionSeed);
 
   this.initGrass();
+  this.initWaterPlants();
 
   this.Z = 10;
 
@@ -250,7 +268,7 @@ DesertLayer.prototype.createSkybox = function(imagePrefix) {
   }
   var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
   var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
-  skyBox.position.y = 1500;//+this.config.waterAmplitude*2;
+  skyBox.position.y = 1500;
   return skyBox;
 };
 
@@ -277,8 +295,13 @@ DesertLayer.prototype.initGrass = function() {
   this.grass.maxFramesOffset = 0.01 * this.grass.growthDuration * (this.numGrasses - 1);
 
   var that = this;
-  var material = new THREE.MeshBasicMaterial({
-    map: Loader.loadTexture('res/textures/grass_diffuse.png')
+
+  var material = new THREE.MeshPhongMaterial({
+    color: 0xffffff,
+    map: Loader.loadTexture('res/textures/grass_diffuse.png'),
+    normalMap: Loader.loadTexture('res/textures/grass_normal.png'),
+    shininess: 15,
+    side: THREE.DoubleSide
   });
 
   var loader = new THREE.OBJLoader();
@@ -294,9 +317,9 @@ DesertLayer.prototype.initGrass = function() {
       Math.seedrandom('yo' + i.toString());
       var randomAngle = Math.random() * 2 * Math.PI;
       var randomRadius = 1700 + 800 * Math.random();
-      clonedObject.position.x = 900 + randomRadius * Math.cos(randomAngle);
+      clonedObject.position.x = that.WATER_CENTER_X + randomRadius * Math.cos(randomAngle);
       clonedObject.position.y = that.grass.startY;
-      clonedObject.position.z = -300 + randomRadius * Math.sin(randomAngle);
+      clonedObject.position.z = that.WATER_CENTER_Z + randomRadius * Math.sin(randomAngle);
       clonedObject.rotation.y = Math.sin(randomRadius);
       Math.seedrandom("iverjo-likes-grass" + i.toString());
       var scale = 150 + 150 * Math.random();
@@ -386,6 +409,83 @@ DesertLayer.prototype.updateSmokeColumn = function(updateParticleGroup, age, fra
   updateParticleGroup.rotation.y = frame * 1000 / 60 * 0.00075;
 }
 
+DesertLayer.prototype.initWaterPlants = function() {
+  this.waterPlants = [];
+  this.numWaterPlants = 20;
+  this.config.waterPlants.growthDuration = this.config.waterPlants.endGrowthFrame - this.config.waterPlants.startGrowthFrame;
+  this.config.waterPlants.startY = -150;
+  this.config.waterPlants.targetY = this.config.waterAmplitude * 2 + 60;
+  this.config.waterPlants.maxFramesOffset = 0.01 * this.grass.growthDuration * (this.numWaterPlants - 1);
+
+  var that = this;
+  var duckweedMaterial = new THREE.MeshLambertMaterial({
+    color: 0x105107,
+    side: THREE.FrontSide
+  });
+  var outerLotusMaterial = new THREE.MeshLambertMaterial({
+    color: 0xF4E9DC,
+    side: THREE.DoubleSide
+  });
+  var middleLotusMaterial = new THREE.MeshLambertMaterial({
+    color: 0xF2D863,
+    side: THREE.DoubleSide
+  });
+  var innerLotusMaterial = new THREE.MeshLambertMaterial({
+    color: 0xF88832,
+    side: THREE.DoubleSide
+  });
+
+  var numComponents = 4;
+  var loadedCounter = 0;
+  var group = new THREE.Object3D();
+
+  var addObjects = function() {
+
+    Math.seedrandom('solskogen');
+    for (var i = 0; i < that.numWaterPlants; i++) {
+      var waterPlant = group.clone();
+      var randomAngle = Math.random() * 2 * Math.PI;
+      var randomRadius = 910 * Math.sqrt(Math.sqrt(Math.random()));
+      var randomScale = 30 + 40 * Math.random();
+      waterPlant.position.x = that.WATER_CENTER_X + randomRadius * Math.cos(randomAngle);
+      waterPlant.position.y = that.config.waterPlants.targetY;
+      waterPlant.position.z = that.WATER_CENTER_Z + randomRadius * Math.sin(randomAngle);
+      waterPlant.rotation.y = Math.sin(randomRadius);
+      waterPlant.userData.initPos = {
+        x: waterPlant.position.x,
+        y: waterPlant.position.y,
+        z: waterPlant.position.z
+      };
+      waterPlant.userData.initRot = {x: 0, y: waterPlant.rotation.y, z: 0};
+      waterPlant.userData.targetScale = randomScale;
+      that.scene.add(waterPlant);
+      that.waterPlants.push(waterPlant);
+    }
+  };
+
+  var loadObject = function (objPath, material) {
+    var loader = new THREE.OBJLoader();
+    loader.load(objPath, function(object) {
+      object.traverse(function(child) {
+        if (child instanceof THREE.Mesh) {
+          child.material = material;
+        }
+      });
+      group.add(object);
+      loadedCounter++;
+      if (loadedCounter >= numComponents) {
+        addObjects();
+      }
+    });
+  };
+
+  var prefix = 'http://localhost:9999/res/objects/';
+  loadObject(prefix + 'duckweed.obj', duckweedMaterial);
+  loadObject(prefix + 'lotus_outer.obj', outerLotusMaterial);
+  loadObject(prefix + 'lotus_middle.obj', middleLotusMaterial);
+  loadObject(prefix + 'lotus_inner.obj', innerLotusMaterial);
+};
+
 DesertLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
 };
@@ -432,6 +532,7 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
   this.updateDandelionSeed(frame, relativeFrame);
 
   this.updateGrass(frame, relativeFrame);
+  this.updateWaterPlants(frame, relativeFrame);
 
   for(var i = 0; i < this.doomSkyBox.material.materials.length; i++) {
     var material = this.doomSkyBox.material.materials[i];
@@ -517,6 +618,36 @@ DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
     && relativeFrame < this.config.grass.windyUntilFrame) {
     for (var i = 0; i < this.grasses.length; i++) {
       this.grasses[i].rotation.x = 0.16 * Math.sin(relativeFrame * 0.033 + 1.5 * i / this.grasses.length);
+    }
+  }
+};
+
+
+DesertLayer.prototype.updateWaterPlants = function(frame, relativeFrame) {
+  //grow
+  if (relativeFrame >= this.config.waterPlants.startGrowthFrame
+    && relativeFrame < (this.config.waterPlants.endGrowthFrame + this.grass.maxFramesOffset)) {
+    for (var i = 0; i < this.waterPlants.length; i++) {
+      var waterPlant = this.waterPlants[i];
+      var offset = 0.01 * this.config.waterPlants.growthDuration * i;
+      var t = (relativeFrame - this.config.waterPlants.startGrowthFrame - offset) / this.config.waterPlants.growthDuration;
+      waterPlant.position.y = smoothstep(this.config.waterPlants.startY, this.config.waterPlants.targetY, t);
+      var scale = smoothstep(0.01, waterPlant.userData.targetScale, t - 0.25);
+      waterPlant.scale.set(scale, scale, scale);
+    }
+  }
+
+  //windy
+  if (relativeFrame >= this.config.waterPlants.startGrowthFrame
+    && relativeFrame < this.config.waterPlants.windyUntilFrame) {
+    for (var i = 0; i < this.waterPlants.length; i++) {
+      var waterPlant = this.waterPlants[i];
+      waterPlant.rotation.y = waterPlant.userData.initRot.y
+        + 0.12 * Math.sin(5 + relativeFrame * 0.035 + 1.8 * i / this.waterPlants.length);
+      waterPlant.position.x = waterPlant.userData.initPos.x
+        + 10 * Math.sin(10 + relativeFrame * 0.03 + 1.8 * i / this.waterPlants.length);
+      waterPlant.position.z = waterPlant.userData.initPos.z
+        + 15 * Math.cos(10 + relativeFrame * 0.038 + 1.8 * i / this.waterPlants.length);
     }
   }
 };

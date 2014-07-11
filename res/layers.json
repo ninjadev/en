@@ -55,6 +55,11 @@
         "startGrowthFrame": 1200,
         "endGrowthFrame": 1600,
         "windyUntilFrame": 4000
+      },
+      "waterPlants": {
+        "startGrowthFrame": 1500,
+        "endGrowthFrame": 2200,
+        "windyUntilFrame": 4000
       }
     }
   },
