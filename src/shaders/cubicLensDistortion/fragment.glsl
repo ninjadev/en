@@ -8,7 +8,10 @@ void main(void) {
     float k = -0.15;
 
     // cubic distortion value
-    float kcube = -0.1;
+    float kcube = 0.1;
+
+    // rgb shift amount
+    float shift = 0.015;
 
     float r2 = (vUv.x - 0.5) * (vUv.x - 0.5) +
                (vUv.y - 0.5) * (vUv.y - 0.5);
@@ -16,7 +19,7 @@ void main(void) {
     vec2 xy = vec2(f * (vUv.x - 0.5) + 0.5,
                    f * (vUv.y - 0.5) + 0.5);
 
-    float fDist = 1. + r2 * ((k - 0.05) + (kcube) * sqrt(r2));
+    float fDist = 1. + r2 * ((k - shift) + kcube * sqrt(r2));
     vec2 xyDist = vec2(fDist * (vUv.x - 0.5) + 0.5,
                    fDist * (vUv.y - 0.5) + 0.5);
 
