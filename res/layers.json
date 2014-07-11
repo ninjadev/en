@@ -3,7 +3,7 @@
     "type": "WallLayer",
     "displayName": "Intro.WallLayer",
     "startFrame": 0,
-    "endFrame": 1442,
+    "endFrame": 1443,
     "color": "#1b592f",
     "config": {
         "hexColor" : [
@@ -27,7 +27,7 @@
     "type": "LetterboxLayer",
     "displayName": "Intro.Letterbox",
     "startFrame": 0,
-    "endFrame": 1442,
+    "endFrame": 1443,
     "color": "#f44f1f"
   },
   {
@@ -44,10 +44,10 @@
       "dandelion": {
         "start": {
           "x": -800,
-          "y": 1800,
+          "y": 3800,
           "z": 0
         },
-        "speed": -2.2,
+        "speed": -2.42,
         "rotationRadius": 50,
         "rotationSpeed": 1
       },
@@ -128,7 +128,7 @@
   {
     "type": "CubicLensDistortionLayer",
     "displayName": "Lens distortion",
-    "startFrame": 1443,
+    "startFrame": 2017,
     "endFrame": 9823,
     "color": "#4dba98"
   },

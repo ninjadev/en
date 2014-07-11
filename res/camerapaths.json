@@ -2,23 +2,44 @@
   {},
   {},
   {},
-  {},
   {
     "position": [
       {
         "type": "spline",
         "startFrame": 0,
-        "endFrame": 850,
+        "endFrame": 300,
+        "points": [
+          [956.97,35.05,-283.51],
+          [957.86,1261.37,-283.78],
+          [958.2,2314.09,-283.92]
+        ]
+      },
+      {
+        "type": "spline",
+        "startFrame": 460,
+        "endFrame": 575,
         "easing": "smoothstep",
         "points": [
-          [700, 3000, 400],
-          [-300, 400, 100],
-          [-600, 150, -100]
+          [958.2, 2314.09, -283.92],
+          [0, 2050, -300],
+          [-200, 1720, -310]
+        ]
+      },
+      {
+        "type": "spline",
+        "startFrame": 611,
+        "endFrame": 1400,
+        "easing": "smoothstep",
+        "points": [
+          [-200, 1720, -310],
+          [-512.07,1526.13,-339.44],
+          [-842.68,1271.39,-386.27],
+          [-1027.95,146.86,-402.39]
         ]
       },
       {
         "type": "point",
-        "startFrame": 965,
+        "startFrame": 1601,
         "endFrame": 2000,
         "point": [-2089.05,1432.54,-1451.99]
       },
@@ -36,19 +57,37 @@
     ],
     "lookAt": [
       {
-        "type": "spline",
+        "type": "point",
         "startFrame": 0,
-        "endFrame": 800,
+        "endFrame": 300,
+        "point": [930.62,4.16,-273.51]
+      },
+      {
+        "type": "spline",
+        "startFrame": 301,
+        "endFrame": 575,
         "easing": "smoothstep",
         "points": [
-          [700, 1350, 0],
-          [-800, 1000, 0],
-          [-800, 100, 0]
+          [930.62,4.16,-273.51],
+          [-830.14,2056.65,-47.12],
+          [-830.14,2206.65,47.12]
+        ]
+      },
+      {
+        "type": "spline",
+        "startFrame": 631,
+        "endFrame": 1600,
+        "easing": "smoothstep",
+        "points": [
+          [-830.14,2206.65,47.12],
+          [-830.14,1806.65,87.12],
+          [-800, 1156.65, 87.12],
+          [-800, 140.65, 87.12]
         ]
       },
       {
         "type": "point",
-        "startFrame": 965,
+        "startFrame": 1601,
         "endFrame": 2000,
         "point": [912.62,5.89,-232.93]
       }
@@ -64,18 +103,26 @@
     "fov": [
       {
         "type": "transition",
-        "startFrame": 400,
-        "endFrame": 500,
+        "startFrame": 450,
+        "endFrame": 560,
         "easing": "smoothstep",
         "from": 45,
-        "to": 28
+        "to": 23
       },
       {
         "type": "transition",
-        "startFrame": 581,
-        "endFrame": 630,
+        "startFrame": 620,
+        "endFrame": 730,
         "easing": "smoothstep",
-        "from": 28,
+        "from": 23,
+        "to": 55
+      },
+      {
+        "type": "transition",
+        "startFrame": 1020,
+        "endFrame": 1140,
+        "easing": "smoothstep",
+        "from": 55,
         "to": 45
       }
     ],
