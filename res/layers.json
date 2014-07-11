@@ -131,12 +131,5 @@
     "startFrame": 2017,
     "endFrame": 9823,
     "color": "#4dba98"
-  },
-  {
-    "type": "VignetteLayer",
-    "displayName": "Vignette",
-    "startFrame": 1443,
-    "endFrame": 9823,
-    "color": "#606882"
   }
 ]
