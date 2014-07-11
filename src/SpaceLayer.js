@@ -22,6 +22,7 @@ function SpaceLayer(layer) {
   this.scene.add(new THREE.AmbientLight(0x222222));
 
   this.initSkybox();
+  this.initMilkyWay();
 
   this.planet1 = this.createPlanet(
     Loader.loadTexture('res/textures/planet1-outracks.jpg'),
@@ -59,6 +60,8 @@ SpaceLayer.prototype.update = function(frame, relativeFrame) {
   this.planet2.update();
   this.planet4.update();
   this.planet3.update();
+
+  this.milkyWay.rotation.z = - relativeFrame / 66 / 4;
 
   this.camera.rotation.x = relativeFrame / 132 / 4;
   this.camera.rotation.y = relativeFrame / 151 / 4;
@@ -131,4 +134,17 @@ SpaceLayer.prototype.initSkybox = function() {
   var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
   var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
   this.scene.add(skyBox);
+};
+
+SpaceLayer.prototype.initMilkyWay = function() {
+  var material = new THREE.MeshBasicMaterial({
+    map: Loader.loadTexture("res/textures/milkyWay.png"),
+    transparent: true,
+    side: THREE.FrontSide,
+    color: 0x888888
+  });
+  this.milkyWay = new THREE.Mesh(new THREE.PlaneGeometry(10000, 10000), material);
+  this.milkyWay.position.z = -9900;
+
+  this.scene.add(this.milkyWay);
 };
