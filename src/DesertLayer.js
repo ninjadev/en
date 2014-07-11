@@ -22,6 +22,7 @@ function DesertLayer(layer) {
 
   this.waterPond = new THREE.Object3D();
 
+  Math.seedrandom('water');
   for (var i=0; i < 40; i++) {
     for (var j=0; j < 12; j++) {
       var offset = i%2 ? 150 : 0;
