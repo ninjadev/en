@@ -105,6 +105,8 @@ function DesertLayer(layer) {
   this.initGrass();
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
+
+  this.initSmokeColumns();
 }
 
 DesertLayer.prototype.createSkybox = function(imagePrefix) {
@@ -180,6 +182,84 @@ DesertLayer.prototype.initGrass = function() {
   });
 };
 
+DesertLayer.prototype.initSmokeColumns = function() {
+  this.smokeColumns = new Array();
+  this.smokeBirthTimes = new Array();
+  /*new THREE.MeshBasicMaterial({
+      map: Loader.loadTexture(imagePrefix + directions[i] + imageSuffix),
+      side: THREE.BackSide,
+      transparent: true
+    }));*/
+  this.particleTexture = Loader.loadTexture( 'res/smokeparticle.png' );
+  this.spriteMaterial = new THREE.SpriteMaterial({
+    map: this.particleTexture,
+    useScreenCoordinates: false,
+    color: 0xffffff,
+    sizeAttenuation: true
+  });
+}
+
+DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame,imgScale,radiusRange,totalParticles) {
+
+  this.smokeColumns.push( new THREE.Object3D() );
+  var smokeColumn = this.smokeColumns[this.smokeColumns.length-1];
+
+  smokeColumn.particleAttributes = { startSize: [], startPosition: [], randomness: [] };
+
+  var totalParticles = 4;
+  var radiusRange = 90;
+  for(var i=0; i < totalParticles; i++) {
+    smokeColumn.add(new THREE.Sprite(this.spriteMaterial));
+    smokeColumn.children[i].scale.set(imgScale, imgScale, 1.0); // imageWidth, imageHeight
+    smokeColumn.children[i].position.set(
+        Math.random() - 0.5,
+        Math.random() - 0.5,
+        Math.random() - 0.5
+        );
+    smokeColumn.children[i].position.setLength(
+        radiusRange * (Math.random() * 0.1 + 0.9)
+        );
+    smokeColumn.children[i].material.color.setHSL(120, 0, 1); 
+    smokeColumn.children[i].material.blending = THREE.AlphaBlending; // "glowing" particles
+    smokeColumn.particleAttributes.startPosition.push(smokeColumn.children[i].position.clone());
+    smokeColumn.particleAttributes.randomness.push(Math.random());
+  }
+
+  smokeColumn.position.set(x,y,z);
+  this.scene.add(smokeColumn);
+  this.smokeBirthTimes.push(frame);
+}
+
+DesertLayer.prototype.updateSmoke = function(frame) {
+  for(var i=0;i<this.smokeColumns.length; i++) {
+    if(frame-this.smokeBirthTimes[i]>240 || frame-this.smokeBirthTimes[i]<-1) {
+      console.log(this.smokeColumns);
+      this.scene.remove(this.smokeColumns[i]);
+      delete this.smokeColumns[i];
+      this.smokeColumns.splice(i,1);
+      this.smokeBirthTimes.splice(i,1);
+    }
+  }
+  for(var i=0;i<this.smokeColumns.length; i++) {
+    this.updateSmokeColumn(this.smokeColumns[i], i, frame);
+  }
+}
+DesertLayer.prototype.updateSmokeColumn = function(updateParticleGroup, age, frame){
+
+  for (var c=0; c < updateParticleGroup.children.length; c++) {
+    var particle = updateParticleGroup.children[c];
+    var attributes = updateParticleGroup.particleAttributes;
+    var a = attributes.randomness[c] + 1;
+    var pulseFactor = Math.sin(a * 0.01 * frame * 1000 / 60) * 0.1 + 0.9;
+    var downscaling = 1 -  (frame - this.smokeBirthTimes[age] + 1) / 200;
+    particle.position.x = attributes.startPosition[c].x * pulseFactor * downscaling;
+    particle.position.y = attributes.startPosition[c].y * pulseFactor + (frame - this.smokeBirthTimes[age]);
+    particle.position.z = attributes.startPosition[c].z * pulseFactor * downscaling;
+  }
+
+  updateParticleGroup.rotation.y = frame * 1000 / 60 * 0.00075;
+}
+
 DesertLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
 };
@@ -231,6 +311,8 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
     var material = this.doomSkyBox.material.materials[i];
     material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
   }
+
+  this.updateSmoke(frame);
 };
 
 DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
