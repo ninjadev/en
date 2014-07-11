@@ -1,0 +1,5 @@
+{
+    tDiffuse: { type: 't', value: null },
+    amount: { type: 'f', value: 0},
+    period: { type: 'v3', value: 0}
+}
