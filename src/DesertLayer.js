@@ -312,20 +312,6 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
     material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
   }
 
-  if(frame%1==0) {
-    this.addSmokeColumn( 
-        this.dandelionSeed.position.x,
-        this.dandelionSeed.position.y,
-        this.dandelionSeed.position.z,
-        frame,
-        64,
-        40,
-        4
-    );
-
-    console.log(this.dandelionSeed.position)
-  }
-
   this.updateSmoke(frame);
 };
 
