@@ -2,6 +2,8 @@
  * @constructor
  */
 function SpaceLayer(layer) {
+  this.config = layer.config;
+
   this.scene = new THREE.Scene();
   this.cameraController = new CameraController(layer.position);
   this.camera = this.cameraController.camera;
@@ -23,6 +25,7 @@ function SpaceLayer(layer) {
 
   this.initSkybox();
   this.initMilkyWay();
+  this.initTrain();
 
   this.planet1 = this.createPlanet(
     Loader.loadTexture('res/textures/planet1-outracks.jpg'),
@@ -66,6 +69,8 @@ SpaceLayer.prototype.update = function(frame, relativeFrame) {
   this.camera.rotation.x = relativeFrame / 132 / 4;
   this.camera.rotation.y = relativeFrame / 151 / 4;
   this.camera.rotation.z = relativeFrame / 163 / 4;
+
+  this.updateTrain(frame, relativeFrame);
 };
 
 
@@ -147,4 +152,73 @@ SpaceLayer.prototype.initMilkyWay = function() {
   this.milkyWay.position.z = -9900;
 
   this.scene.add(this.milkyWay);
+};
+
+SpaceLayer.prototype.initTrain = function() {
+  var that = this;
+  var material = new THREE.MeshBasicMaterial({
+    map: Loader.loadTexture('res/textures/train.jpg')
+  });
+
+  var loader = new THREE.OBJLoader();
+  loader.load('http://localhost:9999/res/objects/train.obj', function(object) {
+    object.traverse(function(child) {
+      if (child instanceof THREE.Mesh) {
+        child.material = material;
+      }
+    });
+    object.userData.initPos = {x: -5000, y: 1673, z: -3363};
+    object.position.set(
+      object.userData.initPos.x,
+      object.userData.initPos.y,
+      object.userData.initPos.z
+    );
+    object.userData.initSpeed = 58000;
+    object.userData.acceleration = -200000;
+
+    object.scale.set(20, 20, -20);
+    that.train = object;
+    that.scene.add(object);
+  });
+
+  var tailMaterial = new THREE.MeshBasicMaterial({
+    map: Loader.loadTexture("res/textures/shootingStar.png"),
+    transparent: true,
+    side: THREE.FrontSide,
+    color: 0x888888
+  });
+  this.shootingStar = new THREE.Mesh(new THREE.PlaneGeometry(510, 109), tailMaterial);
+  var scale = 4;
+  this.shootingStar.scale.set(scale, scale, scale);
+  this.shootingStar.userData.xOffset = -1400;
+  this.shootingStar.userData.zOffset = -450;
+  this.shootingStar.position.set(
+    -5000 + this.shootingStar.userData.xOffset,
+    1673,
+    -3363 + this.shootingStar.userData.zOffset
+  );
+
+  this.scene.add(this.shootingStar);
+};
+
+SpaceLayer.prototype.updateTrain = function(frame, relativeFrame) {
+  if (!this.train) {
+    return false;
+  }
+  if (relativeFrame >= this.config.train.startShootFrame
+    && relativeFrame < this.config.train.endShootFrame) {
+    var t = (relativeFrame - this.config.train.startShootFrame) / (this.config.train.endShootFrame - this.config.train.startShootFrame);
+    var speed = this.train.userData.initSpeed + t * this.train.userData.acceleration;
+    if (speed < 0) {
+      this.scene.remove(this.train);
+      this.scene.remove(this.shootingStar);
+      this.train = null;
+      this.shootingStar = null;
+      return false;
+    }
+    this.train.position.x = this.train.userData.initPos.x
+      + t * this.train.userData.initSpeed
+      + 0.5 * this.train.userData.acceleration * t * t;
+    this.shootingStar.position.x = this.train.position.x + this.shootingStar.userData.xOffset;
+  }
 };
