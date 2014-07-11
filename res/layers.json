@@ -1,11 +1,42 @@
 [
   {
+    "type": "WallLayer",
+    "displayName": "Intro.WallLayer",
+    "startFrame": 0,
+    "endFrame": 1442,
+    "color": "#1b592f",
+    "config": {
+        "hexColor" : [
+            {"outer": "0xfebd01", "inner": "#febd01"},
+            {"outer": "0xfddeaf", "inner": "#fddeaf"},
+            {"outer": "0xe6a5ab", "inner": "#e6a5ab"},
+            {"outer": "0x6a514a", "inner": "#6a514a"},
+            {"outer": "0xff6646", "inner": "#ff6646"},
+            {"outer": "0x33c3ff", "inner": "#33c3ff"}
+        ]
+    }
+  },
+  {
+    "type": "FadeInLayer",
+    "displayName": "Intro.FadeInLayer",
+    "startFrame": 0,
+    "endFrame": 440,
+    "color": "#967117"
+  },
+  {
+    "type": "LetterboxLayer",
+    "displayName": "Intro.Letterbox",
+    "startFrame": 0,
+    "endFrame": 1442,
+    "color": "#f44f1f"
+  },
+  {
     "type": "DesertLayer",
     "dependencies": [
       "VolcanoFactory"
     ],
     "displayName": "Desert",
-    "startFrame": 480,
+    "startFrame": 1443,
     "endFrame": 6728,
     "color": "#7ba90f",
     "config": {
@@ -43,7 +74,7 @@
   {
     "type": "BloomLayer",
     "displayName": "Desert bloom",
-    "startFrame": 616,
+    "startFrame": 1443,
     "endFrame": 6728,
     "color": "#291c4c",
     "config": {
@@ -97,14 +128,14 @@
   {
     "type": "CubicLensDistortionLayer",
     "displayName": "Lens distortion",
-    "startFrame": 713,
+    "startFrame": 1443,
     "endFrame": 9823,
     "color": "#4dba98"
   },
   {
     "type": "VignetteLayer",
     "displayName": "Vignette",
-    "startFrame": 821,
+    "startFrame": 1443,
     "endFrame": 9823,
     "color": "#606882"
   }
