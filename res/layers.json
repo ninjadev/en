@@ -28,6 +28,13 @@
     "color": "#967117"
   },
   {
+    "type": "LetterboxLayer",
+    "displayName": "Intro.Letterbox",
+    "startFrame": 0,
+    "endFrame": 1442,
+    "color": "#f44f1f"
+  },
+  {
     "type": "DesertLayer",
     "dependencies": [
       "VolcanoFactory"
