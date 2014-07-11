@@ -10,6 +10,15 @@ function DesertLayer(layer) {
   this.camera = this.cameraController.camera;
   this.scene.add(this.camera);
 
+  var volcanoFactory = new VolcanoFactory( this.scene );
+  this.volcano = volcanoFactory.create(
+    new THREE.Vector3( 920.5, -5,-272.03 ),
+    28, // Base scale
+    100, // Max lava ball size
+    120, // Number of lava balls
+    false // Party mode
+    );
+
   this.waterHexes = [];
 
   this.waterPond = new THREE.Object3D();
@@ -71,8 +80,9 @@ function DesertLayer(layer) {
 
   var waterBorderGeo = new THREE.TorusGeometry(1450, 150, 6, 6);
   var waterBorderMat = new THREE.MeshBasicMaterial({
-    color: 0xafd7f7
+    color: 0x539cc6
   });
+
   this.waterBorder = new THREE.Mesh(waterBorderGeo, waterBorderMat);
   this.waterBorder.position.x = 900;
   this.waterBorder.position.z = -300;
@@ -143,6 +153,20 @@ DesertLayer.prototype.render = function(renderer, interpolation) {
 
 DesertLayer.prototype.update = function(frame, relativeFrame) {
   this.cameraController.updateCamera(relativeFrame);
+
+  if (frame < 4400) {
+    this.scene.remove(this.volcano);
+  } else if (frame > 4400) {
+    this.scene.add(this.volcano);
+    this.volcano.update( frame - 4600 );
+    this.volcano.position.y = clamp(-10, -10 + (frame - 4400) / 27, 20);
+  }
+
+  var material = this.waterBorder.material;
+  material.color = new THREE.Color(
+    smoothstep(0.33, 0.6, (frame - 4400) / (4440 - 4400)),
+    smoothstep(0.61, 0.24, (frame - 4400) / (4440 - 4400)),
+    smoothstep(0.78, 0.2, (frame - 4400) / (4440 - 4400)));
 
   for (var i = 0; i < this.waterHexes.length; i++) {
     var hex = this.waterHexes[i];

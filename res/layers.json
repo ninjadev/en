@@ -1,6 +1,9 @@
 [
   {
     "type": "DesertLayer",
+    "dependencies": [
+      "VolcanoFactory"
+    ],
     "displayName": "Desert",
     "startFrame": 480,
     "endFrame": 6728,
