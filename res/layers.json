@@ -32,7 +32,13 @@
     "displayName": "Space",
     "startFrame": 6728,
     "endFrame": 10000,
-    "color": "#8c2b3c"
+    "color": "#8c2b3c",
+    "config": {
+      "train": {
+        "startShootFrame": 100,
+        "endShootFrame": 350
+      }
+    }
   },
   {
     "type": "BloomLayer",
