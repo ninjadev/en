@@ -31,12 +31,14 @@ function DesertLayer(layer) {
   this.scene.add(this.light4);
   this.scene.add(this.light5);
 
-  var volcanoFactory = new VolcanoFactory( this.scene );
+
+  this.fireFactory = new FireFactory(this.scene);
+  var volcanoFactory = new VolcanoFactory( this.scene, this.fireFactory );
   this.volcano = volcanoFactory.create(
     new THREE.Vector3( 920.5, -5,-272.03 ),
     28, // Base scale
     100, // Max lava ball size
-    120, // Number of lava balls
+    10, // Number of lava balls
     false // Party mode
     );
 
@@ -149,6 +151,8 @@ function DesertLayer(layer) {
   this.scene.add(this.doomSkyBox);
 
   this.initDandelionSeeds();
+  this.fireParticles = this.createFireParticleSystem(50, 500, 1000);
+  this.scene.add(this.fireParticles);
   this.initGrass();
   this.initWaterPlants();
 
@@ -308,7 +312,7 @@ DesertLayer.prototype.createSkybox = function(imagePrefix) {
     materialArray.push(new THREE.MeshBasicMaterial({
       map: Loader.loadTexture(imagePrefix + directions[i] + imageSuffix),
       side: THREE.BackSide,
-      transparent: true
+      transparent: false
     }));
   }
   var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
@@ -395,6 +399,17 @@ DesertLayer.prototype.initGrass = function() {
       var scale = 150 + 150 * Math.random();
       clonedObject.scale.set(scale, scale * 1.25, scale * 1.5);
       clonedObject.initScale = scale;
+    
+      if(Math.random() < 0.25){
+        var firePos = clonedObject.position.clone();
+        firePos.y = that.grass.targetY;
+        clonedObject.fire = that.fireFactory.create(firePos, scale, 300, 200);
+        var catch_fire_spread = 700;
+        clonedObject.fire.offset = Math.random() * catch_fire_spread;
+        clonedObject.hasFire = true;
+      }else{
+        clonedObject.hasFire = false;
+      }
       that.grasses.push(clonedObject);
       that.scene.add(clonedObject);
     }
@@ -477,7 +492,6 @@ DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame,imgScale,radiusRange
 DesertLayer.prototype.updateSmoke = function(frame) {
   for(var i=0;i<this.smokeColumns.length; i++) {
     if(frame-this.smokeBirthTimes[i]>240 || frame-this.smokeBirthTimes[i]<-1) {
-      console.log(this.smokeColumns);
       this.scene.remove(this.smokeColumns[i]);
       delete this.smokeColumns[i];
       this.smokeColumns.splice(i,1);
@@ -634,6 +648,9 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
 
   this.updateSmoke(frame, relativeFrame);
 
+  this.updateFireParticles(this.fireParticles, frame, relativeFrame);
+
+
   this.updateGrass(frame, relativeFrame);
 
   this.updateWaterPlants(frame, relativeFrame);
@@ -676,6 +693,13 @@ DesertLayer.prototype.updateDoomHexagons = function(relativeFrame) {
   this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[23], 23, {direction: 'fall'});
   this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[27], 27, {direction: 'fall'});
 };
+
+DesertLayer.prototype.updateFireParticles = function(fireParticleSystem, frame, relativeFrame){
+  var particles = fireParticleSystem.geometry.vertices;
+  for(var i = 0; i < particles.length; i++){
+    particles[i].y = (particles[i].initPos.y + relativeFrame * particles[i].velocity.y) % particles[i].endPos;
+  }
+}
 
 DesertLayer.prototype.updateDandelionSeeds = function(frame, relativeFrame) {
   for (var i = 0; i < this.dandelionSeed.wingCylinders.length; i++) {
@@ -761,6 +785,7 @@ DesertLayer.prototype.updateLeaves = function(frame, relativeFrame) {
 };
 
 DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
+
   //grow
   if (relativeFrame >= this.config.grass.startGrowthFrame
     && relativeFrame < (this.config.grass.endGrowthFrame + this.grass.maxFramesOffset)) {
@@ -773,12 +798,29 @@ DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
       grass.scale.set(scale, scale, scale);
     }
   }
-
   //windy
   if (relativeFrame >= this.config.grass.startGrowthFrame
     && relativeFrame < this.config.grass.windyUntilFrame) {
     for (var i = 0; i < this.grasses.length; i++) {
       this.grasses[i].rotation.x = 0.16 * Math.sin(relativeFrame * 0.033 + 1.5 * i / this.grasses.length);
+      if(this.grasses[i].hasFire){
+        this.grasses[i].fire.rotation.x = 0.16 * Math.sin(relativeFrame * 0.033 + 1.5 * i / this.grasses.length);
+      }
+    }
+  }
+
+  //FIRE FIRE FIRE
+  for (var i = 0; i < this.grasses.length; i++) {
+    if(!this.grasses[i].hasFire){ continue;}
+
+    if(this.grasses[i].fire.offset <= frame - 4400){
+      if(this.grasses[i].fire.offset == frame - 4400){
+        this.grasses[i].fire.resetParticles();
+      }
+      this.scene.add(this.grasses[i].fire);
+      this.grasses[i].fire.update(relativeFrame);
+    }else{
+      this.scene.remove(this.grasses[i].fire);
     }
   }
 };
