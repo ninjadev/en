@@ -169,5 +169,12 @@
     "startFrame": 1448,
     "endFrame": 9823,
     "color": "#5d91de"
+  },
+  {
+    "type": "ColorGradingLayer",
+    "displayName": "Color grading",
+    "startFrame": 2000,
+    "endFrame": 9823,
+    "color": "#8b5438"
   }
 ]
