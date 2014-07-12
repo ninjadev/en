@@ -148,11 +148,7 @@ function DesertLayer(layer) {
   this.doomSkyBox.scale.set(0.99, 0.99, 0.99);
   this.scene.add(this.doomSkyBox);
 
-  this.initDandelionSeedMaterials();
-  this.dandelionSeed = DandelionSeed(this, 0.2, true);
-  this.dandelionSeed.position.copy(this.config.dandelion.start);
-  this.scene.add(this.dandelionSeed);
-
+  this.initDandelionSeeds();
   this.initGrass();
   this.initWaterPlants();
 
@@ -301,9 +297,9 @@ DesertLayer.prototype.createSkybox = function(imagePrefix) {
   return skyBox;
 };
 
-DesertLayer.prototype.initDandelionSeedMaterials = function() {
+DesertLayer.prototype.initDandelionSeeds = function() {
   this.dandelionSeedMaterials = {
-    wing: new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.65, transparent: true}),
+    wing: new THREE.MeshBasicMaterial({color: 0xffffff, opacity: 0.75, transparent: true}),
     body: new THREE.MeshBasicMaterial({
       map: Loader.loadTexture('res/textures/seedBodyTexture.png')
     }),
@@ -311,6 +307,30 @@ DesertLayer.prototype.initDandelionSeedMaterials = function() {
       map: Loader.loadTexture('res/textures/seedTexture.png')
     })
   };
+
+  //the one dandelion seed that matters (the camera follows it and it turns into a tree)
+  this.dandelionSeed = DandelionSeed(this, true, 50);
+  this.dandelionSeed.position.copy(this.config.dandelion.start);
+  this.scene.add(this.dandelionSeed);
+
+  //more flying dandelion seed
+  this.fakeDandelionSeeds = [];
+  var numFakeDandelionSeeds = 15;
+  Math.seedrandom('so-many-wow');
+  for (var i = 0; i < numFakeDandelionSeeds; i++) {
+    var fakeDandelionSeed = DandelionSeed(this, false, 20);
+    fakeDandelionSeed.position.copy(this.config.dandelion.start);
+    fakeDandelionSeed.position.x += 1000 * Math.random();
+    fakeDandelionSeed.position.y += 800 * Math.random();
+    fakeDandelionSeed.position.z += 1000 * Math.random();
+    fakeDandelionSeed.userData.initPos = {
+      x: fakeDandelionSeed.position.x,
+      y: fakeDandelionSeed.position.y,
+      z: fakeDandelionSeed.position.z
+    };
+    this.fakeDandelionSeeds.push(fakeDandelionSeed);
+    this.scene.add(fakeDandelionSeed);
+  }
 };
 
 DesertLayer.prototype.initGrass = function() {
@@ -318,7 +338,7 @@ DesertLayer.prototype.initGrass = function() {
   this.numGrasses = 100;
   this.grass = {
     growthDuration: this.config.grass.endGrowthFrame - this.config.grass.startGrowthFrame,
-    startY: -140,
+    startY: -180,
     targetY: this.config.waterAmplitude * 2 + 10
   };
   this.grass.maxFramesOffset = 0.01 * this.grass.growthDuration * (this.numGrasses - 1);
@@ -400,7 +420,7 @@ DesertLayer.prototype.initSmokeColumns = function() {
     color: 0xffffff,
     sizeAttenuation: true
   });
-}
+};
 
 DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame,imgScale,radiusRange,totalParticles) {
 
@@ -431,7 +451,7 @@ DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame,imgScale,radiusRange
   smokeColumn.position.set(x,y,z);
   this.scene.add(smokeColumn);
   this.smokeBirthTimes.push(frame);
-}
+};
 
 DesertLayer.prototype.updateSmoke = function(frame) {
   for(var i=0;i<this.smokeColumns.length; i++) {
@@ -446,7 +466,7 @@ DesertLayer.prototype.updateSmoke = function(frame) {
   for(var i=0;i<this.smokeColumns.length; i++) {
     this.updateSmokeColumn(this.smokeColumns[i], i, frame);
   }
-}
+};
 DesertLayer.prototype.updateSmokeColumn = function(updateParticleGroup, age, frame){
 
   for (var c=0; c < updateParticleGroup.children.length; c++) {
@@ -461,7 +481,7 @@ DesertLayer.prototype.updateSmokeColumn = function(updateParticleGroup, age, fra
   }
 
   updateParticleGroup.rotation.y = frame * 1000 / 60 * 0.00075;
-}
+};
 
 DesertLayer.prototype.initWaterPlants = function() {
   this.waterPlants = [];
@@ -582,8 +602,7 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
     hex.material.color = newColor;
   }
 
-  //TODO: don't update dandelion seed when it is not in sight
-  this.updateDandelionSeed(frame, relativeFrame);
+  this.updateDandelionSeeds(frame, relativeFrame);
 
   this.updateShadowLight();
 
@@ -630,7 +649,7 @@ DesertLayer.prototype.updateDoomHexagons = function(relativeFrame) {
   this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[27], 27, {direction: 'fall'});
 };
 
-DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
+DesertLayer.prototype.updateDandelionSeeds = function(frame, relativeFrame) {
   for (var i = 0; i < this.dandelionSeed.wingCylinders.length; i++) {
     var wingCylinder = this.dandelionSeed.wingCylinders[i];
     wingCylinder.rotation.z = wingCylinder.initialRotation.z + Math.PI / 8 * Math.sin(wingCylinder.rotation.z) * (0.5 + 0.02 * i) * 0.8 * Math.sin(relativeFrame * 0.036);
@@ -638,8 +657,8 @@ DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
   }
 
   var options = this.config.dandelion;
-  var groundLevel = this.config.waterAmplitude*2+100;
-
+  var groundLevel = this.config.waterAmplitude * 2 + 100;
+  var actualGroundHitTime = 954;
   this.dandelionSeed.position.y = options.start.y + options.speed * relativeFrame;
   if (this.dandelionSeed.position.y > groundLevel) {
     var t = relativeFrame / 60 * options.rotationSpeed;
@@ -649,8 +668,25 @@ DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
     this.dandelionSeed.rotation.x = 0.25 * Math.sin(relativeFrame * 0.0321 + 5);
     this.dandelionSeed.rotation.y = 0.018 * relativeFrame + 0.15 * Math.sin(relativeFrame * 0.035);
     this.dandelionSeed.rotation.z = 0.28 * Math.cos(relativeFrame * 0.03);
+  } else if (relativeFrame >= actualGroundHitTime) {
+    this.dandelionSeed.position.y = groundLevel + options.speed * (actualGroundHitTime - 944) - (relativeFrame - actualGroundHitTime);
+  }
+
+  if (relativeFrame < 1500) {
+    for (var i = 0; i < this.fakeDandelionSeeds.length; i++) {
+      var fakeDandelionSeed = this.fakeDandelionSeeds[i];
+      fakeDandelionSeed.position.x = fakeDandelionSeed.userData.initPos.x + 600 * Math.sin(relativeFrame * 0.006 + 7 * i)
+      fakeDandelionSeed.position.y = fakeDandelionSeed.userData.initPos.y + options.speed * relativeFrame;
+      fakeDandelionSeed.position.z = fakeDandelionSeed.userData.initPos.z + 600 * Math.cos(relativeFrame * 0.007 + 3 * i)
+    }
   } else {
-    this.dandelionSeed.position.y = groundLevel;
+    if (this.fakeDandelionSeeds.length) {
+      for (var i = 0; i < this.fakeDandelionSeeds.length; i++) {
+        var fakeDandelionSeed = this.fakeDandelionSeeds[i];
+        this.scene.remove(this.fakeDandelionSeeds[i]);
+      }
+      this.fakeDandelionSeeds.length = 0;
+    }
   }
 
   this.growthIndex = relativeFrame / 10;
@@ -709,7 +745,6 @@ DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
     }
   }
 };
-
 
 DesertLayer.prototype.updateWaterPlants = function(frame, relativeFrame) {
   //grow
@@ -798,18 +833,17 @@ function randomDesertColor() {
 
 /**
  * @param layer reference to instance of DesertLayer
- * @param scale number between 0 and x
  * @returns {THREE.Object3D}
  * @constructor
  */
-function DandelionSeed(layer, scale, castShadow) {
+function DandelionSeed(layer, castShadow, numColumns) {
   var seedSphereGeometry, bodyCylinderGeometry, wingCylinderGeometry, //geometries
     dandelionSeed, seedSphere, topSphere, bodyCylinder, // meshes
-    WING_LENGTH = 120; //constants
+    WING_LENGTH = 125; //constants
 
   seedSphereGeometry = new THREE.SphereGeometry(12, 12, 20);
-  bodyCylinderGeometry = new THREE.CylinderGeometry(2, 2, 240, 16);
-  wingCylinderGeometry = new THREE.CylinderGeometry(0.5, 1, WING_LENGTH, 8);
+  bodyCylinderGeometry = new THREE.CylinderGeometry(2, 2, 240, 8);
+  wingCylinderGeometry = new THREE.CylinderGeometry(0.7, 1.2, WING_LENGTH, 8);
   wingCylinderGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, WING_LENGTH / 2, 0));
 
   dandelionSeed = new THREE.Object3D();
@@ -826,7 +860,7 @@ function DandelionSeed(layer, scale, castShadow) {
   dandelionSeed.wingCylinders = [];
 
   Math.seedrandom("iverjo-is-sexy");
-  for (var i = 0; i < 50; i++) {
+  for (var i = 0; i < numColumns; i++) {
     var wingCylinder = new THREE.Mesh(wingCylinderGeometry, layer.dandelionSeedMaterials.wing);
     wingCylinder.castShadow = castShadow;
 
@@ -845,6 +879,7 @@ function DandelionSeed(layer, scale, castShadow) {
   dandelionSeed.add(seedSphere);
   dandelionSeed.add(bodyCylinder);
 
+  var scale = 0.2;
   dandelionSeed.scale.set(scale, scale, scale);
 
   return dandelionSeed;
