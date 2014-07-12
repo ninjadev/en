@@ -149,12 +149,14 @@ function DesertLayer(layer) {
   this.scene.add(this.doomSkyBox);
 
   this.initDandelionSeedMaterials();
-  this.dandelionSeed = DandelionSeed(this, 0.2);
+  this.dandelionSeed = DandelionSeed(this, 0.2, true);
   this.dandelionSeed.position.copy(this.config.dandelion.start);
   this.scene.add(this.dandelionSeed);
 
   this.initGrass();
   this.initWaterPlants();
+
+  this.initShadowLight();
 
   this.Z = 10;
 
@@ -358,6 +360,29 @@ DesertLayer.prototype.initGrass = function() {
   });
 };
 
+DesertLayer.prototype.initShadowLight = function() {
+  light = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2, 1 );
+  light.position.set( -810,80,-61 );
+  light.target.position.set( -803, 60, -61 );
+
+  light.castShadow = true;
+
+  light.shadowCameraNear = 1;
+  light.shadowCameraFar = 2500;
+  light.shadowCameraFov = 50;
+
+  light.shadowCameraVisible = false;
+
+  light.shadowBias = 0.0001;
+  light.shadowDarkness = 0.5;
+
+  light.shadowMapWidth = 2048;
+  light.shadowMapHeight = 1024;
+
+  this.scene.add(light);
+}
+
+
 DesertLayer.prototype.initSmokeColumns = function() {
   this.smokeColumns = new Array();
   this.smokeBirthTimes = new Array();
@@ -524,6 +549,8 @@ DesertLayer.prototype.end = function() {
 };
 
 DesertLayer.prototype.render = function(renderer, interpolation) {
+  renderer.shadowMapEnabled = true;
+  renderer.shadowMapType = THREE.PCFShadowMap;
   renderer.render(this.scene, this.camera);
 };
 
@@ -728,10 +755,11 @@ DesertLayer.prototype.updateDoomHexagon = function (relativeFrame, startFrame, h
 function Hexagon(radius, x, y, z, color) {
   var hexGeometry = new THREE.CircleGeometry(radius, 6);
   var hex = new THREE.Mesh(
-    hexGeometry, new THREE.MeshBasicMaterial({
+    hexGeometry, new THREE.MeshPhongMaterial({
       color: color,
       shading: THREE.FlatShading
   }));
+  hex.receiveShadow = true;
   hex.position = new THREE.Vector3(x, y, z);
   hex.rotation.x = -Math.PI / 2;
   hex.userData.baseColor = hex.material.color;
@@ -772,7 +800,7 @@ function randomDesertColor() {
  * @returns {THREE.Object3D}
  * @constructor
  */
-function DandelionSeed(layer, scale) {
+function DandelionSeed(layer, scale, castShadow) {
   var seedSphereGeometry, bodyCylinderGeometry, wingCylinderGeometry, //geometries
     dandelionSeed, seedSphere, topSphere, bodyCylinder, // meshes
     WING_LENGTH = 120; //constants
@@ -813,6 +841,8 @@ function DandelionSeed(layer, scale) {
   dandelionSeed.add(bodyCylinder);
 
   dandelionSeed.scale.set(scale, scale, scale);
+
+  dandelionSeed.castShadow = castShadow;
 
   return dandelionSeed;
 }
