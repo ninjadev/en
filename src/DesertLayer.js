@@ -427,7 +427,7 @@ DesertLayer.prototype.initShadowLight = function(parrent) {
   this.danderlight.castShadow = true;
 
   this.danderlight.shadowCameraNear = 10;
-  this.danderlight.shadowCameraFar = 2500;
+  this.danderlight.shadowCameraFar = 1000;
   this.danderlight.shadowCameraFov = 50;
 
   this.danderlight.shadowCameraVisible = false;
