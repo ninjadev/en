@@ -15,21 +15,24 @@ function DesertLayer(layer) {
   //light
   this.ambientLight = new THREE.AmbientLight(0x555555);
   this.light1 = new THREE.PointLight(0xFFEAC3, .7);
-  this.light2 = new THREE.PointLight(0xFFEAC3, .4);
-  this.light3 = new THREE.PointLight(0xFFEAC3, .4);
-  this.light4 = new THREE.PointLight(0xFFEAC3, .4);
-  this.light5 = new THREE.PointLight(0xFFEAC3, .4);
+  this.light2 = new THREE.PointLight(0xFFEAC3, .3);
+  this.light3 = new THREE.PointLight(0xFFEAC3, .3);
+  this.light4 = new THREE.PointLight(0xFFEAC3, .3);
+  this.light5 = new THREE.PointLight(0xFFEAC3, .3);
+  this.directionalLight = new THREE.DirectionalLight( 0xFFCC79, 0.4 );
   this.light1.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z);
   this.light2.position = new THREE.Vector3(this.WATER_CENTER_X + 1500, 1000, this.WATER_CENTER_Z);
   this.light3.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z + 1500);
   this.light4.position = new THREE.Vector3(this.WATER_CENTER_X - 1500, 1000, this.WATER_CENTER_Z);
   this.light5.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z - 1500);
+  this.directionalLight.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z);
   this.scene.add(this.ambientLight);
   this.scene.add(this.light1);
   this.scene.add(this.light2);
   this.scene.add(this.light3);
   this.scene.add(this.light4);
   this.scene.add(this.light5);
+  this.scene.add(this.directionalLight);
 
   var volcanoFactory = new VolcanoFactory( this.scene );
   this.volcano = volcanoFactory.create(
