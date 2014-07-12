@@ -161,6 +161,13 @@
     "color": "#41ccfb"
   },
   {
+    "type": "ScanlineLayer",
+    "displayName": "Scanlines",
+    "startFrame": 1448,
+    "endFrame": 9823,
+    "color": "#5d91de"
+  },
+  {
     "type": "VignetteLayer",
     "displayName": "Vignette",
     "startFrame": 1448,
