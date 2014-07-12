@@ -1,17 +1,18 @@
 uniform sampler2D tDiffuse;
+uniform float amount;
 varying vec2 vUv;
 
 
 void main(void) {
 
     // lens distortion coefficient
-    float k = -0.15;
+    float k = -0.15 * amount;
 
     // cubic distortion value
-    float kcube = 0.1;
+    float kcube = 0.1 * amount;
 
     // rgb shift amount
-    float shift = 0.015;
+    float shift = 0.015 * amount;
 
     float r2 = (vUv.x - 0.5) * (vUv.x - 0.5) +
                (vUv.y - 0.5) * (vUv.y - 0.5);
