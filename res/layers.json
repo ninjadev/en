@@ -6,21 +6,39 @@
     "endFrame": 1443,
     "color": "#1b592f",
     "config": {
-        "hexColor" : [
-            {"outer": "0xfebd01", "inner": "#febd01"},
-            {"outer": "0xfddeaf", "inner": "#fddeaf"},
-            {"outer": "0xe6a5ab", "inner": "#e6a5ab"},
-            {"outer": "0x6a514a", "inner": "#6a514a"},
-            {"outer": "0xff6646", "inner": "#ff6646"},
-            {"outer": "0x33c3ff", "inner": "#33c3ff"}
-        ]
+      "hexColor": [
+        {
+          "outer": "0xfebd01",
+          "inner": "#febd01"
+        },
+        {
+          "outer": "0xfddeaf",
+          "inner": "#fddeaf"
+        },
+        {
+          "outer": "0xe6a5ab",
+          "inner": "#e6a5ab"
+        },
+        {
+          "outer": "0x6a514a",
+          "inner": "#6a514a"
+        },
+        {
+          "outer": "0xff6646",
+          "inner": "#ff6646"
+        },
+        {
+          "outer": "0x33c3ff",
+          "inner": "#33c3ff"
+        }
+      ]
     }
   },
   {
     "type": "FadeInLayer",
     "displayName": "Intro.FadeInLayer",
     "startFrame": 0,
-    "endFrame": 440,
+    "endFrame": 480,
     "color": "#967117"
   },
   {
