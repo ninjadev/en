@@ -599,12 +599,14 @@ DesertLayer.prototype.render = function(renderer, interpolation) {
 DesertLayer.prototype.update = function(frame, relativeFrame) {
   this.cameraController.updateCamera(relativeFrame);
 
-  if (frame < 4400) {
+  if (frame < 4600) {
     this.scene.remove(this.volcano);
-  } else if (frame > 4400) {
+    this.waterPond.position.y = 0;
+  } else {
+    this.waterPond.position.y = -10000;
     this.scene.add(this.volcano);
-    this.volcano.update( frame - 4600 );
-    this.volcano.position.y = clamp(-10, -10 + (frame - 4400) / 27, 20);
+    this.volcano.update( frame - 4800 );
+    this.volcano.position.y = clamp(-10, -10 + (frame - 4600) / 27, 20);
   }
 
   var material = this.waterBorder.material;
