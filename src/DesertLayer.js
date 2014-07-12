@@ -34,12 +34,14 @@ function DesertLayer(layer) {
   this.scene.add(this.light5);
   this.scene.add(this.directionalLight);
 
-  var volcanoFactory = new VolcanoFactory( this.scene );
+
+  this.fireFactory = new FireFactory(this.scene);
+  var volcanoFactory = new VolcanoFactory( this.scene, this.fireFactory );
   this.volcano = volcanoFactory.create(
     new THREE.Vector3( 920.5, -5,-272.03 ),
     28, // Base scale
     100, // Max lava ball size
-    120, // Number of lava balls
+    10, // Number of lava balls
     false // Party mode
     );
 
@@ -161,10 +163,10 @@ function DesertLayer(layer) {
   this.waterBorder.rotation.z = Math.PI/3;
   this.scene.add(this.waterBorder);
 
-  this.skyBox = this.createSkybox('res/skyboxes/dunes_');
+  this.skyBox = this.createSkybox('res/skyboxes/dunes_', true);
   this.scene.add(this.skyBox);
-  this.doomSkyBox = this.createSkybox('res/skyboxes/dunes_doom_');
-  this.doomSkyBox.scale.set(0.99, 0.99, 0.99);
+  this.doomSkyBox = this.createSkybox('res/skyboxes/dunes_doom_', false);
+  this.skyBox.scale.set(0.99, 0.99, 0.99);
   this.scene.add(this.doomSkyBox);
 
   this.initDandelionSeeds();
@@ -317,7 +319,7 @@ function DesertLayer(layer) {
   this.initSmokeColumns();
 }
 
-DesertLayer.prototype.createSkybox = function(imagePrefix) {
+DesertLayer.prototype.createSkybox = function(imagePrefix, transp) {
   var directions  = ["right", "left", "top", "bottom", "front", "back"];
   var imageSuffix = ".jpg";
   var skyGeometry = new THREE.BoxGeometry(15000, 15000, 15000);
@@ -327,7 +329,7 @@ DesertLayer.prototype.createSkybox = function(imagePrefix) {
     materialArray.push(new THREE.MeshBasicMaterial({
       map: Loader.loadTexture(imagePrefix + directions[i] + imageSuffix),
       side: THREE.BackSide,
-      transparent: true
+      transparent: transp
     }));
   }
   var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
@@ -410,10 +412,31 @@ DesertLayer.prototype.initGrass = function() {
       clonedObject.position.y = that.grass.startY;
       clonedObject.position.z = that.WATER_CENTER_Z + randomRadius * Math.sin(randomAngle);
       clonedObject.rotation.y = Math.sin(randomRadius);
+
+      //certain grasses need to be removed before doom starts
+      var doomedPoint = new THREE.Vector3(3012.31, 20, -1187.6);
+      var deltaX = doomedPoint.x - clonedObject.position.x;
+      var deltaZ = doomedPoint.z - clonedObject.position.z;
+      var ishDistanceToDoomedPlace = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+      clonedObject.userData.removeInDoom = ishDistanceToDoomedPlace < 850;
+
       Math.seedrandom("iverjo-likes-grass" + i.toString());
       var scale = 150 + 150 * Math.random();
       clonedObject.scale.set(scale, scale * 1.25, scale * 1.5);
       clonedObject.initScale = scale;
+    
+      if(Math.random() < 0.25){
+        var firePos = clonedObject.position.clone();
+        firePos.y = that.grass.targetY;
+        firePos.x += 0.5*scale*Math.sin(clonedObject.rotation.y);
+        firePos.z += 0.5*scale*Math.cos(clonedObject.rotation.y);
+        clonedObject.fire = that.fireFactory.create(firePos, scale, 300, 200);
+        var catch_fire_spread = 700;
+        clonedObject.fire.offset = Math.random() * catch_fire_spread;
+        clonedObject.hasFire = true;
+      }else{
+        clonedObject.hasFire = false;
+      }
       that.grasses.push(clonedObject);
       that.scene.add(clonedObject);
     }
@@ -427,7 +450,7 @@ DesertLayer.prototype.initShadowLight = function(parrent) {
   this.danderlight.castShadow = true;
 
   this.danderlight.shadowCameraNear = 10;
-  this.danderlight.shadowCameraFar = 2500;
+  this.danderlight.shadowCameraFar = 1000;
   this.danderlight.shadowCameraFov = 50;
 
   this.danderlight.shadowCameraVisible = false;
@@ -499,7 +522,6 @@ DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame,imgScale,radiusRange
 DesertLayer.prototype.updateSmoke = function(frame) {
   for(var i=0;i<this.smokeColumns.length; i++) {
     if(frame-this.smokeBirthTimes[i]>540 || frame-this.smokeBirthTimes[i]<-1) {
-      console.log(this.smokeColumns);
       this.scene.remove(this.smokeColumns[i]);
       delete this.smokeColumns[i];
       this.smokeColumns.splice(i,1);
@@ -664,9 +686,9 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
 
   this.updateDoomHexagons(relativeFrame);
 
-  for(var i = 0; i < this.doomSkyBox.material.materials.length; i++) {
-    var material = this.doomSkyBox.material.materials[i];
-    material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
+  for(var i = 0; i < this.skyBox.material.materials.length; i++) {
+    var material = this.skyBox.material.materials[i];
+    material.opacity = smoothstep(1, 0, (frame - 4400) / (4440 - 4400));
   }
 
   if(frame > 4250 && frame < 5500) {
@@ -800,6 +822,7 @@ DesertLayer.prototype.updateLeaves = function(frame, relativeFrame) {
 };
 
 DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
+
   //grow
   if (relativeFrame >= this.config.grass.startGrowthFrame
     && relativeFrame < (this.config.grass.endGrowthFrame + this.grass.maxFramesOffset)) {
@@ -813,11 +836,38 @@ DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
     }
   }
 
+  //Remove certain grasses in doom
+  if (relativeFrame > 3130) {
+    for (var i = 0; i < this.grasses.length; i++) {
+      if (this.grasses[i].userData.removeInDoom) {
+        this.grasses[i].position.y = -20000;
+      }
+    }
+  }
+
   //windy
   if (relativeFrame >= this.config.grass.startGrowthFrame
     && relativeFrame < this.config.grass.windyUntilFrame) {
     for (var i = 0; i < this.grasses.length; i++) {
       this.grasses[i].rotation.x = 0.16 * Math.sin(relativeFrame * 0.033 + 1.5 * i / this.grasses.length);
+      if(this.grasses[i].hasFire){
+        this.grasses[i].fire.rotation.x = this.grasses[i].rotation.x;
+      }
+    }
+  }
+
+  //FIRE FIRE FIRE
+  for (var i = 0; i < this.grasses.length; i++) {
+    if(!this.grasses[i].hasFire){ continue;}
+
+    if(this.grasses[i].fire.offset <= frame - 4400){
+      if(this.grasses[i].fire.offset == frame - 4400){
+        this.grasses[i].fire.resetParticles();
+      }
+      this.scene.add(this.grasses[i].fire);
+      this.grasses[i].fire.update(relativeFrame);
+    }else{
+      this.scene.remove(this.grasses[i].fire);
     }
   }
 };
