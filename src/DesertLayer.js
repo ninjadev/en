@@ -160,7 +160,6 @@ function DesertLayer(layer) {
 
   this.Z = 10;
 
-  //
   this.treeScale = 5;
   
   this.splines = [
@@ -219,7 +218,7 @@ function DesertLayer(layer) {
   ];
 
 
-
+  // TODO: Functioning, has to be moved somewhere visible.
   this.rubbles = [];
   for(var i = 0; i < 100; i++) {
     var rubble = new THREE.Mesh(
@@ -261,6 +260,7 @@ function DesertLayer(layer) {
   Loader.start(function(){}, function(){});
 
   this.tubes = [];
+  this.tubeContainer = new THREE.Object3D();
   for(var i = 0; i < this.splines.length; i++) {
     var spline = this.splines[i];
     var tubeGeometry = new THREE.TubeGeometryEx(
@@ -274,8 +274,26 @@ function DesertLayer(layer) {
         normalMap: this.barkNormalMap,
         shininess: 10
       }));
-    this.scene.add(this.tubes[i]);
+    this.tubeContainer.add(this.tubes[i]);
   }
+
+  var leafFactory = new LeafFactory();
+  this.leaves = [];
+  for(var i = 0; i < this.tubes.length; i++) {
+    var tube = this.tubes[i];
+
+    var lenVertices = tube.geometry.vertices.length;
+    for (var j = Math.floor(lenVertices / 2); j < lenVertices; j += 150) {
+      var center = tube.geometry.centers[j];
+      var leaf = leafFactory.createDouble(96);
+      leaf.position = center.clone();
+      this.leaves.push(leaf);
+      this.tubeContainer.add(leaf);
+    }
+  }
+
+  this.scene.add(this.tubeContainer);
+  this.tubeContainer.position = new THREE.Vector3(-796.08,60.1,-55.48);
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 
@@ -589,16 +607,22 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
 
   this.updateShadowLight();
 
+  this.updateTree(frame, relativeFrame);
+
+  this.updateLeaves(frame, relativeFrame);
+
+  this.updateSmoke(frame, relativeFrame);
+
   this.updateGrass(frame, relativeFrame);
+
   this.updateWaterPlants(frame, relativeFrame);
+
+  this.updateDoomHexagons(relativeFrame);
 
   for(var i = 0; i < this.doomSkyBox.material.materials.length; i++) {
     var material = this.doomSkyBox.material.materials[i];
     material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
   }
-
-  this.updateSmoke(frame);
-  this.updateDoomHexagons(relativeFrame);
 };
 
 DesertLayer.prototype.updateDoomHexagons = function(relativeFrame) {
@@ -654,7 +678,9 @@ DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
   } else {
     this.dandelionSeed.position.y = groundLevel;
   }
+}
 
+DesertLayer.prototype.updateTree = function(frame, relativeFrame) {
   this.growthIndex = relativeFrame / 10;
 
   var treeRelativeFrame = relativeFrame + 1897 - 957;
@@ -686,6 +712,13 @@ DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
     tube.geometry.verticesNeedUpdate = true;
 
     tube.position.y = 11;
+  }
+};
+
+DesertLayer.prototype.updateLeaves = function(frame, relativeFrame) {
+  for (var i = 0; i < this.leaves.length; i++) {
+    var leaf = this.leaves[i];
+    leaf.update(frame - 3500);
   }
 };
 
