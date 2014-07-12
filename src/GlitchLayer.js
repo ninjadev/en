@@ -18,6 +18,17 @@ GlitchLayer.prototype.update = function(frame, relativeFrame) {
   }
   */
 
+  if(frame >= 5400 && frame < 6227) {
+    this.shaderPass.uniforms.amount.value = 0.1;
+    this.shaderPass.uniforms.time.value = frame;
+  }
+
+  if(frame >= 6227 && frame < 6355) {
+    this.shaderPass.uniforms.amount.value = smoothstep(
+        0.25, 0, (frame - 6227) / (6355 - 6227));
+    this.shaderPass.uniforms.time.value = frame;
+  }
+
   if(frame >= 7620 && frame < 7650) {
     this.shaderPass.uniforms.amount.value = smoothstep(
         0.25, 0, (frame - 7620) / 30);
