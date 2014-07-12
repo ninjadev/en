@@ -132,8 +132,133 @@
       }
     ]
   },
-  {},
-  {},
+  {
+    "position": [
+      {
+        "type": "spline",
+        "startFrame": 0,
+        "endFrame": 350,
+        "easing": "easeOut",
+        "points": [
+          [74.1,28.61,-105.18],
+          [151.59,58.36,-212.01],
+          [4077.46,144.2,-506.21]
+        ]
+      },
+      {
+        "type": "spline",
+        "startFrame": 480,
+        "endFrame": 800,
+        "easing": "smoothstep",
+        "points": [
+          [5000,2144.2,-306.21],
+          [-1000, 1900, -100],
+          [-4000, 1550, 290]
+        ]
+      },
+      {
+        "type": "spline",
+        "startFrame": 960,
+        "endFrame": 1433,
+        "easing": "smoothstep",
+        "points": [
+          [1100, 1500, 1200],
+          [1111.49,1366.67,1296.61],
+          [1150, 1320, 1330]
+        ]
+      },
+      {
+        "type": "spline",
+        "startFrame": 1434,
+        "endFrame": 1833,
+        "easing": "smoothstep",
+        "points": [
+          [1.88,-1491.97,91.3],
+          [195.51,-1499.19,153.25],
+          [302.08,-1502.37,88.64]
+        ]
+      }
+    ],
+    "lookAt": [
+      {
+        "type": "point",
+        "startFrame": 0,
+        "endFrame": 200,
+        "point": [0, 0, 0]
+      },
+      {
+        "type": "spline",
+        "startFrame": 201,
+        "endFrame": 350,
+        "points": [
+          [0, 0, 0],
+          [1000, 100, -200],
+          [4000, 150, -200]
+        ]
+      },
+     {
+       "type": "spline",
+       "startFrame": 480,
+       "endFrame": 800,
+       "points": [
+        [4500, 230, -400],
+        [-2500, 600, 200],
+        [-3500, 1590, 480]
+       ]
+     },
+      {
+        "type": "point",
+        "startFrame": 960,
+        "endFrame": 1433,
+        "point": [1000, 1500, 1000]
+      },
+      {
+        "type": "spline",
+        "startFrame": 1434,
+        "endFrame": 1834,
+        "points": [
+           [81.54,-1507.03,-28.05],
+           [177.98,-1511.29,-5.21],
+           [227.95,-1512.94,-39.47]
+        ]
+      }
+    ]
+  },
+  {
+   "hack for flying object": "because yolo time",
+   "position": [
+     {
+       "type": "spline",
+       "startFrame": 0,
+       "endFrame": 400,
+       "points": [
+        [0, 0, 0],
+        [800, 100, -100],
+        [4500, 230, -400]
+       ]
+     },
+     {
+       "type": "spline",
+       "startFrame": 480,
+       "endFrame": 800,
+       "points": [
+        [4500, 230, -400],
+        [-2500, 600, 120],
+        [-3500, 1590, 460]
+       ]
+     },
+     {
+       "type": "spline",
+       "startFrame": 800,
+       "endFrame": 1250,
+       "points": [
+        [-3500, 1590, 460],
+        [-8500, 2430, 800],
+        [-8500, 2800, 1200]
+       ]
+     }
+   ]
+  },
   {},
   {},
   {},

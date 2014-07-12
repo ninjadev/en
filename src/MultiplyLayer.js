@@ -8,7 +8,7 @@ function MultiplyLayer() {
 
 MultiplyLayer.prototype.update = function(frame, relativeFrame) {
   if (relativeFrame > 327) {
-    var t = 1 - (relativeFrame - 327) / 20;
+    var t = 1 - (relativeFrame - 327) / 50;
   } else {
     var t = (relativeFrame - 230) / 60;
   }

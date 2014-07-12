@@ -27,6 +27,15 @@ function SpaceLayer(layer) {
   this.initMilkyWay();
   this.initTrain();
 
+  var material = new THREE.MeshBasicMaterial({color: 0xbb8855});
+  var geometry = new THREE.CylinderGeometry(40, 25, 120, 6);
+  this.flyingStone = new THREE.Mesh(geometry, material);
+  this.flyingStone.rotation.x = Math.PI/2;
+  this.flyingStone.rotation.z = Math.PI/2;
+  this.scene.add(this.flyingStone);
+
+  this.flyingStoneController = new CameraController(layer.position+1);
+
   this.planetX = this.createPlanet(
     Loader.loadTexture('res/textures/planetX-earth.jpg'),
     Loader.loadTexture('res/textures/planetX-earth-normalmap.jpg'));
@@ -48,11 +57,17 @@ function SpaceLayer(layer) {
   this.scene.add(this.planet2.object3D);
   this.scene.add(this.planet3.object3D);
   this.scene.add(this.planet4.object3D);
+
+  Loader.start(function(){}, function(){});
 }
 
 SpaceLayer.prototype.update = function(frame, relativeFrame) {
   this.planetX.planetMesh.rotation.y = relativeFrame / 118 / 2;
-  this.planetX.object3D.position.set(0, 0, 0);
+  if (relativeFrame < 500) {
+    this.planetX.object3D.position.set(0, 0, 0);
+  } else {
+    this.planetX.object3D.position.set(-30000, -30000, -30000);
+  }
 
   this.planet1.planetMesh.rotation.y = relativeFrame / 167 / 2;
   this.planet1.object3D.position.set(4000, 150, -200);
@@ -60,7 +75,7 @@ SpaceLayer.prototype.update = function(frame, relativeFrame) {
   this.planet2.planetMesh.rotation.y = relativeFrame / 142 / 2;
   this.planet2.object3D.position.set(-3500, 1500, 300);
 
-  this.planet3.planetMesh.rotation.y = relativeFrame / 112 / 2;
+  this.planet3.planetMesh.rotation.y = - relativeFrame / 112 / 2;
   this.planet3.object3D.position.set(150, -1500, -100);
 
   this.planet4.planetMesh.rotation.y = relativeFrame / 124 / 2;
@@ -72,11 +87,11 @@ SpaceLayer.prototype.update = function(frame, relativeFrame) {
   this.planet3.update();
   this.planet4.update();
 
+  this.updateFlyingStone(frame, relativeFrame);
+
   this.milkyWay.rotation.z = - relativeFrame / 66 / 4;
 
-  this.camera.rotation.x = relativeFrame / 132 / 4;
-  this.camera.rotation.y = relativeFrame / 151 / 4;
-  this.camera.rotation.z = relativeFrame / 163 / 4;
+  this.cameraController.updateCamera(relativeFrame);
 
   this.updateTrain(frame, relativeFrame);
 };
@@ -230,4 +245,11 @@ SpaceLayer.prototype.updateTrain = function(frame, relativeFrame) {
       + 0.5 * this.train.userData.acceleration * t * t;
     this.shootingStar.position.x = this.train.position.x + this.shootingStar.userData.xOffset;
   }
+};
+
+SpaceLayer.prototype.updateFlyingStone = function(frame, relativeFrame) {
+  this.flyingStoneController.updateCamera(relativeFrame); // let's pretend this is a camera
+  this.flyingStone.position.copy(this.flyingStoneController.camera.position);
+
+  this.flyingStone.rotation.x = relativeFrame;
 };
