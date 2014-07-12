@@ -76,7 +76,7 @@ function DesertLayer(layer) {
 
   this.rocketHex = rocketHex;
   this.scene.add(rocketHex);
-  this.rocketStart = 5080;
+  this.rocketStart = 4870;
 
   var waterGeometry = new THREE.CircleGeometry(1500, 6);
   var waterMaterial = new THREE.MeshBasicMaterial({
