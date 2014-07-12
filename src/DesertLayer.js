@@ -75,7 +75,7 @@ function DesertLayer(layer) {
   this.waterPond.rotation.y = Math.PI/3;
   this.scene.add(this.waterPond);
 
-  this.desertHexStart = -4990;
+  this.desertHexStart = -4980;
   this.desertHexes = [];
   for (var i=0; i < 17; i++) {
     for (var j=0; j < 5; j++) {
@@ -567,6 +567,10 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
   }
 
   this.updateSmoke(frame);
+  this.updateDoomHexagons(relativeFrame);
+};
+
+DesertLayer.prototype.updateDoomHexagons = function(relativeFrame) {
 
   this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[0], 0, {direction: 'fall'});
   this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[5], 5, {direction: 'fall'});
