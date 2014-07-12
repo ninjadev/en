@@ -144,10 +144,10 @@ function DesertLayer(layer) {
   this.waterBorder.rotation.z = Math.PI/3;
   this.scene.add(this.waterBorder);
 
-  this.skyBox = this.createSkybox('res/skyboxes/dunes_');
+  this.skyBox = this.createSkybox('res/skyboxes/dunes_', true);
   this.scene.add(this.skyBox);
-  this.doomSkyBox = this.createSkybox('res/skyboxes/dunes_doom_');
-  this.doomSkyBox.scale.set(0.99, 0.99, 0.99);
+  this.doomSkyBox = this.createSkybox('res/skyboxes/dunes_doom_', false);
+  this.skyBox.scale.set(0.99, 0.99, 0.99);
   this.scene.add(this.doomSkyBox);
 
   this.initDandelionSeeds();
@@ -300,7 +300,7 @@ function DesertLayer(layer) {
   this.initSmokeColumns();
 }
 
-DesertLayer.prototype.createSkybox = function(imagePrefix) {
+DesertLayer.prototype.createSkybox = function(imagePrefix, transp) {
   var directions  = ["right", "left", "top", "bottom", "front", "back"];
   var imageSuffix = ".jpg";
   var skyGeometry = new THREE.BoxGeometry(15000, 15000, 15000);
@@ -310,7 +310,7 @@ DesertLayer.prototype.createSkybox = function(imagePrefix) {
     materialArray.push(new THREE.MeshBasicMaterial({
       map: Loader.loadTexture(imagePrefix + directions[i] + imageSuffix),
       side: THREE.BackSide,
-      transparent: false
+      transparent: transp
     }));
   }
   var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
@@ -652,9 +652,9 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
 
   this.updateDoomHexagons(relativeFrame);
 
-  for(var i = 0; i < this.doomSkyBox.material.materials.length; i++) {
-    var material = this.doomSkyBox.material.materials[i];
-    material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
+  for(var i = 0; i < this.skyBox.material.materials.length; i++) {
+    var material = this.skyBox.material.materials[i];
+    material.opacity = smoothstep(1, 0, (frame - 4400) / (4440 - 4400));
   }
 };
 
