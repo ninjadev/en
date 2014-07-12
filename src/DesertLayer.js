@@ -97,37 +97,37 @@ function DesertLayer(layer) {
     }
   }
   // Change this to change the entire timing of the  desert floor falling out animation.
-  this.hexagonFallingBase = 3500;
+  this.hexagonFallingBase = 3090;
 
   this.hexagonFallingTimings = {}
-  this.hexagonFallingTimings[0] = this.hexagonFallingBase + 0;
-  this.hexagonFallingTimings[5] = this.hexagonFallingBase + 10;
-  this.hexagonFallingTimings[1] = this.hexagonFallingBase + 20;
-  this.hexagonFallingTimings[6] = this.hexagonFallingBase + 30;
-  this.hexagonFallingTimings[17] = this.hexagonFallingBase + 30;
-  this.hexagonFallingTimings[2] = this.hexagonFallingBase + 40;
-  this.hexagonFallingTimings[7] = this.hexagonFallingBase + 50;
-  this.hexagonFallingTimings[3] = this.hexagonFallingBase + 60;
-  this.hexagonFallingTimings[8] = this.hexagonFallingBase + 70;
+  this.hexagonFallingTimings[0] = this.hexagonFallingBase + 120;
+  this.hexagonFallingTimings[5] = this.hexagonFallingBase + 130;
+  this.hexagonFallingTimings[1] = this.hexagonFallingBase + 140;
+  this.hexagonFallingTimings[6] = this.hexagonFallingBase + 150;
+  this.hexagonFallingTimings[17] = this.hexagonFallingBase + 150;
+  this.hexagonFallingTimings[2] = this.hexagonFallingBase + 160;
+  this.hexagonFallingTimings[7] = this.hexagonFallingBase + 170;
+  this.hexagonFallingTimings[3] = this.hexagonFallingBase + 180;
+  this.hexagonFallingTimings[8] = this.hexagonFallingBase + 190;
 
 
-  this.hexagonFallingTimings[11] = this.hexagonFallingBase + 30;
-  this.hexagonFallingTimings[21] = this.hexagonFallingBase + 40;
-  this.hexagonFallingTimings[31] = this.hexagonFallingBase + 50;
-  this.hexagonFallingTimings[40] = this.hexagonFallingBase + 60;
-  this.hexagonFallingTimings[50] = this.hexagonFallingBase + 70;
-  this.hexagonFallingTimings[60] = this.hexagonFallingBase + 80;
+  this.hexagonFallingTimings[11] = this.hexagonFallingBase + 150;
+  this.hexagonFallingTimings[21] = this.hexagonFallingBase + 160;
+  this.hexagonFallingTimings[31] = this.hexagonFallingBase + 170;
+  this.hexagonFallingTimings[40] = this.hexagonFallingBase + 180;
+  this.hexagonFallingTimings[50] = this.hexagonFallingBase + 190;
+  this.hexagonFallingTimings[60] = this.hexagonFallingBase + 200;
 
   // Follow this rising with camera
-  this.hexagonFallingTimings[51] = this.hexagonFallingBase + 120;
-  this.hexagonFallingTimings[41] = this.hexagonFallingBase + 140;
-  this.hexagonFallingTimings[25] = this.hexagonFallingBase + 140;
-  this.hexagonFallingTimings[34] = this.hexagonFallingBase + 145;
-  this.hexagonFallingTimings[44] = this.hexagonFallingBase + 145;
+  this.hexagonFallingTimings[51] = 3200 + 120;
+  this.hexagonFallingTimings[41] = 3200 + 140;
+  this.hexagonFallingTimings[25] = 3200 + 140;
+  this.hexagonFallingTimings[34] = 3200 + 145;
+  this.hexagonFallingTimings[44] = 3200 + 145;
 
-  this.hexagonFallingTimings[18] = this.hexagonFallingBase + 100;
-  this.hexagonFallingTimings[23] = this.hexagonFallingBase + 110;
-  this.hexagonFallingTimings[27] = this.hexagonFallingBase + 120;
+  this.hexagonFallingTimings[18] = this.hexagonFallingBase + 0;
+  this.hexagonFallingTimings[23] = this.hexagonFallingBase + 40;
+  this.hexagonFallingTimings[27] = this.hexagonFallingBase + 80;
 
   var waterBorderGeo = new THREE.TorusGeometry(1450, 150, 6, 6);
   var waterBorderMat = new THREE.MeshBasicMaterial({
