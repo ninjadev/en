@@ -454,6 +454,9 @@ DesertLayer.prototype.initSmokeColumns = function() {
       transparent: true
     }));*/
   this.particleTexture = Loader.loadTexture( 'res/smokeparticle.png' );
+  if(!window.FILES) {
+    Loader.start( function(){}, function(){});
+  }
   this.spriteMaterial = new THREE.SpriteMaterial({
     map: this.particleTexture,
     useScreenCoordinates: false,
@@ -495,7 +498,7 @@ DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame,imgScale,radiusRange
 
 DesertLayer.prototype.updateSmoke = function(frame) {
   for(var i=0;i<this.smokeColumns.length; i++) {
-    if(frame-this.smokeBirthTimes[i]>240 || frame-this.smokeBirthTimes[i]<-1) {
+    if(frame-this.smokeBirthTimes[i]>540 || frame-this.smokeBirthTimes[i]<-1) {
       console.log(this.smokeColumns);
       this.scene.remove(this.smokeColumns[i]);
       delete this.smokeColumns[i];
@@ -666,6 +669,17 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
     material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
   }
 
+  if(frame > 4250 && frame < 5500) {
+    this.addSmokeColumn( 
+        4500,
+        -450,
+        -1413,
+        frame,
+        256,
+        400,
+        4
+    );
+  }
 
   var t = clamp(0, relativeFrame - this.rocketStart, 999999);
   this.rocketHex.position.y = this.rocketStartPosition + t * 100;
