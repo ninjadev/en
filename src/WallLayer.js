@@ -18,11 +18,11 @@ function WallLayer(layer) {
   this.hexesPosition = [];
   this.textures = [];
   this.pictures = [
-    { name: "ninjadev", picOptions: { picX: 170, picY: 580 } },
-    { name: "solskogen", picOptions: { picX: 100, picY: 520 } },
-    { name: "presents", picOptions: { picX: 170, picY: 580 } },
-    { name: "a-demo-called", picOptions: { picX: 110, picY: 500 } },
-    { name: "inakuwa", picOptions: { picX: 110, picY: 490 } },
+    { name: "ninjadev", picOptions: { picX: 170, picY: 600 } },
+    { name: "solskogen", picOptions: { picX: 120, picY: 580 } },
+    { name: "presents", picOptions: { picX: 170, picY: 570 } },
+    { name: "a-demo-called", picOptions: { picX: 140, picY: 535 } },
+    { name: "inakuwa", picOptions: { picX: 125, picY: 560 } },
     { name: "no-picture", picOptions: { picX: 0, picY: 0 } }
   ];
 
