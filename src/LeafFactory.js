@@ -19,7 +19,9 @@ function LeafFactory() {
   var leaves_green_2 = Loader.loadTexture("res/textures/leaves_green_2.png");
   var leaves_yellow_1 = Loader.loadTexture("res/textures/leaves_yellow_1.png");
   var leaves_yellow_2 = Loader.loadTexture("res/textures/leaves_yellow_2.png");
-  Loader.start(function () {}, function() {});
+  if(!window.FILES) {
+    Loader.start(function () {}, function() {});
+  }
 
   return {
     createSingle: function createSingle(width) {

@@ -58,7 +58,9 @@ function SpaceLayer(layer) {
   this.scene.add(this.planet3.object3D);
   this.scene.add(this.planet4.object3D);
 
-  Loader.start(function(){}, function(){});
+  if(!window.FILES) {
+    Loader.start(function () {}, function() {});
+  }
 }
 
 SpaceLayer.prototype.update = function(frame, relativeFrame) {
