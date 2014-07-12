@@ -757,7 +757,7 @@ DesertLayer.prototype.updateDoomHexagon = function (relativeFrame, startFrame, h
 function Hexagon(radius, x, y, z, color) {
   var hexGeometry = new THREE.CircleGeometry(radius, 6);
   var hex = new THREE.Mesh(
-    hexGeometry, new THREE.MeshPhongMaterial({
+    hexGeometry, new THREE.MeshLambertMaterial({
       color: color,
       shading: THREE.FlatShading
   }));
