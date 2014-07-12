@@ -131,5 +131,12 @@
     "startFrame": 2017,
     "endFrame": 9823,
     "color": "#4dba98"
+  },
+  {
+    "type": "GlitchLayer",
+    "displayName": "Space glitch effects",
+    "startFrame": 2017,
+    "endFrame": 9823,
+    "color": "#784411"
   }
 ]
