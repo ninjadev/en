@@ -789,6 +789,14 @@ DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
 };
 
 DesertLayer.prototype.updateWaterPlants = function(frame, relativeFrame) {
+  if (relativeFrame > 3040) {
+    for (var i = 0; i < this.waterPlants.length; i++) {
+      this.scene.remove(this.waterPlants[i]);
+    }
+    this.waterPlants.length = 0;
+    return false;
+  }
+
   //grow
   if (relativeFrame >= this.config.waterPlants.startGrowthFrame
     && relativeFrame < (this.config.waterPlants.endGrowthFrame + this.grass.maxFramesOffset)) {
