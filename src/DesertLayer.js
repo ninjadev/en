@@ -401,6 +401,8 @@ DesertLayer.prototype.initGrass = function() {
       if(Math.random() < 0.25){
         var firePos = clonedObject.position.clone();
         firePos.y = that.grass.targetY;
+        firePos.x += 0.5*scale*Math.sin(clonedObject.rotation.y);
+        firePos.z += 0.5*scale*Math.cos(clonedObject.rotation.y);
         clonedObject.fire = that.fireFactory.create(firePos, scale, 300, 200);
         var catch_fire_spread = 700;
         clonedObject.fire.offset = Math.random() * catch_fire_spread;
