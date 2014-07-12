@@ -19,22 +19,29 @@ function LeafFactory() {
   var leaves_green_2 = Loader.loadTexture("res/textures/leaves_green_2.png");
   var leaves_yellow_1 = Loader.loadTexture("res/textures/leaves_yellow_1.png");
   var leaves_yellow_2 = Loader.loadTexture("res/textures/leaves_yellow_2.png");
+  Loader.start(function () {}, function() {});
 
   return {
     createSingle: function createSingle(width) {
+      var green = new THREE.Color(
+        (76 + Math.random() * 30) / 256,
+        (40 + Math.random() * 100) / 256,
+        (62 + Math.random() * 10) / 256
+        );
+
       var materialGreen = new THREE.MeshBasicMaterial({
         map: Math.random > 0.5 ? leaves_green_1 : leaves_green_2,
         alphaTest: 0.5,
         // https://stackoverflow.com/questions/11827968/three-js-transparent-maps-issue
         side: THREE.DoubleSide,
-        color: 0x888888
+        color: green
       });
 
       var materialYellow = new THREE.MeshBasicMaterial({
         map: Math.random > 0.5 ? leaves_yellow_1 : leaves_yellow_2,
         alphaTest: 0.5,
         side: THREE.DoubleSide,
-        color: 0x888888
+        color: green
       });
 
       var leaf = new THREE.Mesh(
@@ -46,10 +53,16 @@ function LeafFactory() {
       leafContainer.add(leaf);
 
       leafContainer.update = function update(activationFrame) {
+        if (activationFrame < 0) {
+          leafContainer.remove(leaf)
+        } else if (activationFrame - 100 > 0) {
+          leafContainer.add(leaf)
+        }
+
         leafContainer.scale.x = smoothstep(0.01, 1,
-          (activationFrame - 100) / 20 );
+          (activationFrame - 100) / 360 );
         leafContainer.scale.y = smoothstep(0.01, 1,
-          (activationFrame - 110) / 30 );
+          (activationFrame - 110) / 500 );
       };
 
       leafContainer.yellowOrGreen = function yellowOrGreen(yellow) {
