@@ -140,7 +140,7 @@ function DesertLayer(layer) {
   this.hexagonFallingTimings[60] = this.hexagonFallingBase + 200;
 
   // Follow this rising with camera
-  this.hexagonFallingTimings[51] = 5370
+  this.hexagonFallingTimings[51] = 3929;
   this.hexagonFallingTimings[41] = 3200 + 140;
   this.hexagonFallingTimings[25] = 3200 + 140;
   this.hexagonFallingTimings[34] = 3200 + 145;
@@ -234,6 +234,7 @@ function DesertLayer(layer) {
     ])
   ];
 
+  window.test = this.desertHexes[51];
 
   // TODO: Functioning, has to be moved somewhere visible.
   this.rubbles = [];
