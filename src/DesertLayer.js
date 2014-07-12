@@ -521,7 +521,7 @@ DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame,imgScale,radiusRange
 
 DesertLayer.prototype.updateSmoke = function(frame) {
   for(var i=0;i<this.smokeColumns.length; i++) {
-    if(frame-this.smokeBirthTimes[i]>540 || frame-this.smokeBirthTimes[i]<-1) {
+    if(frame-this.smokeBirthTimes[i]>340 || frame-this.smokeBirthTimes[i]<-1) {
       this.scene.remove(this.smokeColumns[i]);
       delete this.smokeColumns[i];
       this.smokeColumns.splice(i,1);
@@ -691,15 +691,26 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
     material.opacity = smoothstep(1, 0, (frame - 4400) / (4440 - 4400));
   }
 
-  if(frame > 4250 && frame < 5500) {
+  if(frame > 4350 && frame < 5000) {
     this.addSmokeColumn( 
         4500,
-        -450,
+        -350,
         -1413,
         frame,
         256,
         400,
-        4
+        1
+    );
+  }
+  if(frame > 4250 && frame < 4500) {
+    this.addSmokeColumn( 
+        6250,
+        -86,
+        -3508,
+        frame,
+        256,
+        400,
+        1
     );
   }
 
