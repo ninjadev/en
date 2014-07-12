@@ -151,8 +151,6 @@ function DesertLayer(layer) {
   this.scene.add(this.doomSkyBox);
 
   this.initDandelionSeeds();
-  this.fireParticles = this.createFireParticleSystem(50, 500, 1000);
-  this.scene.add(this.fireParticles);
   this.initGrass();
   this.initWaterPlants();
 
@@ -648,9 +646,6 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
 
   this.updateSmoke(frame, relativeFrame);
 
-  this.updateFireParticles(this.fireParticles, frame, relativeFrame);
-
-
   this.updateGrass(frame, relativeFrame);
 
   this.updateWaterPlants(frame, relativeFrame);
@@ -693,13 +688,6 @@ DesertLayer.prototype.updateDoomHexagons = function(relativeFrame) {
   this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[23], 23, {direction: 'fall'});
   this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[27], 27, {direction: 'fall'});
 };
-
-DesertLayer.prototype.updateFireParticles = function(fireParticleSystem, frame, relativeFrame){
-  var particles = fireParticleSystem.geometry.vertices;
-  for(var i = 0; i < particles.length; i++){
-    particles[i].y = (particles[i].initPos.y + relativeFrame * particles[i].velocity.y) % particles[i].endPos;
-  }
-}
 
 DesertLayer.prototype.updateDandelionSeeds = function(frame, relativeFrame) {
   for (var i = 0; i < this.dandelionSeed.wingCylinders.length; i++) {
