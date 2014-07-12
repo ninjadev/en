@@ -44,10 +44,10 @@
       "dandelion": {
         "start": {
           "x": -800,
-          "y": 3800,
+          "y": 2800,
           "z": 0
         },
-        "speed": -2.42,
+        "speed": -2.85,
         "rotationRadius": 50,
         "rotationSpeed": 1
       },
