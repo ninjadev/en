@@ -792,7 +792,7 @@ DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
     for (var i = 0; i < this.grasses.length; i++) {
       this.grasses[i].rotation.x = 0.16 * Math.sin(relativeFrame * 0.033 + 1.5 * i / this.grasses.length);
       if(this.grasses[i].hasFire){
-        this.grasses[i].fire.rotation.x = 0.16 * Math.sin(relativeFrame * 0.033 + 1.5 * i / this.grasses.length);
+        this.grasses[i].fire.rotation.x = this.grasses[i].rotation.x;
       }
     }
   }
