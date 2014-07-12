@@ -183,5 +183,12 @@
     "startFrame": 2000,
     "endFrame": 9823,
     "color": "#8b5438"
+  },
+  {
+    "type": "EndingLayer",
+    "displayName": "EndingLayer",
+    "startFrame": 9547,
+    "endFrame": 9823,
+    "color": "#800000"
   }
 ]
