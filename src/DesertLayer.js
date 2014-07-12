@@ -757,11 +757,10 @@ DesertLayer.prototype.updateDoomHexagon = function (relativeFrame, startFrame, h
 function Hexagon(radius, x, y, z, color) {
   var hexGeometry = new THREE.CircleGeometry(radius, 6);
   var hex = new THREE.Mesh(
-    hexGeometry, new THREE.MeshLambertMaterial({
+    hexGeometry, new THREE.MeshBasicMaterial({
       color: color,
       shading: THREE.FlatShading
   }));
-  hex.receiveShadow = true;
   hex.position = new THREE.Vector3(x, y, z);
   hex.rotation.x = -Math.PI / 2;
   hex.userData.baseColor = hex.material.color;
@@ -771,10 +770,11 @@ function Hexagon(radius, x, y, z, color) {
 function DesertHexagon(radius, x, y, z, color) {
   var hexGeometry = new THREE.CylinderGeometry(radius, radius, 10000, 6);
   var hex = new THREE.Mesh(
-    hexGeometry, new THREE.MeshBasicMaterial({
+    hexGeometry, new THREE.MeshLambertMaterial({
       color: color,
       shading: THREE.FlatShading
   }));
+  hex.receiveShadow = true;
   hex.position = new THREE.Vector3(x, y, z);
   hex.rotation.y = Math.PI / 6;
   hex.userData.baseColor = hex.material.color;
