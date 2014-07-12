@@ -75,6 +75,7 @@ function DesertLayer(layer) {
   this.waterPond.rotation.y = Math.PI/3;
   this.scene.add(this.waterPond);
 
+  this.desertHexStart = -4990;
   this.desertHexes = [];
   for (var i=0; i < 17; i++) {
     for (var j=0; j < 5; j++) {
@@ -83,10 +84,10 @@ function DesertLayer(layer) {
       var z = i * 1212.4 - 7500;
 
       if (new THREE.Vector2(x, z).length() >= 1500) {
-        var hex = Hexagon(
+        var hex = DesertHexagon(
             1400,
             x,
-            this.config.waterAmplitude*2+5 + Math.random()*10,
+            this.desertHexStart,
             z,
             randomDesertColor()
             );
@@ -95,10 +96,38 @@ function DesertLayer(layer) {
       }
     }
   }
-  for (var i = 0; i < this.desertHexes.length; i++) {
-    var hex = this.desertHexes[i];
-  }
+  // Change this to change the entire timing of the  desert floor falling out animation.
+  this.hexagonFallingBase = 3500;
 
+  this.hexagonFallingTimings = {}
+  this.hexagonFallingTimings[0] = this.hexagonFallingBase + 0;
+  this.hexagonFallingTimings[5] = this.hexagonFallingBase + 10;
+  this.hexagonFallingTimings[1] = this.hexagonFallingBase + 20;
+  this.hexagonFallingTimings[6] = this.hexagonFallingBase + 30;
+  this.hexagonFallingTimings[17] = this.hexagonFallingBase + 30;
+  this.hexagonFallingTimings[2] = this.hexagonFallingBase + 40;
+  this.hexagonFallingTimings[7] = this.hexagonFallingBase + 50;
+  this.hexagonFallingTimings[3] = this.hexagonFallingBase + 60;
+  this.hexagonFallingTimings[8] = this.hexagonFallingBase + 70;
+
+
+  this.hexagonFallingTimings[11] = this.hexagonFallingBase + 30;
+  this.hexagonFallingTimings[21] = this.hexagonFallingBase + 40;
+  this.hexagonFallingTimings[31] = this.hexagonFallingBase + 50;
+  this.hexagonFallingTimings[40] = this.hexagonFallingBase + 60;
+  this.hexagonFallingTimings[50] = this.hexagonFallingBase + 70;
+  this.hexagonFallingTimings[60] = this.hexagonFallingBase + 80;
+
+  // Follow this rising with camera
+  this.hexagonFallingTimings[51] = this.hexagonFallingBase + 120;
+  this.hexagonFallingTimings[41] = this.hexagonFallingBase + 140;
+  this.hexagonFallingTimings[25] = this.hexagonFallingBase + 140;
+  this.hexagonFallingTimings[34] = this.hexagonFallingBase + 145;
+  this.hexagonFallingTimings[44] = this.hexagonFallingBase + 145;
+
+  this.hexagonFallingTimings[18] = this.hexagonFallingBase + 100;
+  this.hexagonFallingTimings[23] = this.hexagonFallingBase + 110;
+  this.hexagonFallingTimings[27] = this.hexagonFallingBase + 120;
 
   var waterBorderGeo = new THREE.TorusGeometry(1450, 150, 6, 6);
   var waterBorderMat = new THREE.MeshBasicMaterial({
@@ -129,8 +158,6 @@ function DesertLayer(layer) {
 
   this.Z = 10;
 
-  //this.splines = DesertLayer.createTreeSplines();
-  //console.log(a = this.splines);
   //
   this.treeScale = 5;
   
@@ -289,7 +316,7 @@ DesertLayer.prototype.initGrass = function() {
   this.numGrasses = 100;
   this.grass = {
     growthDuration: this.config.grass.endGrowthFrame - this.config.grass.startGrowthFrame,
-    startY: -200,
+    startY: -140,
     targetY: this.config.waterAmplitude * 2 + 10
   };
   this.grass.maxFramesOffset = 0.01 * this.grass.growthDuration * (this.numGrasses - 1);
@@ -540,6 +567,34 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
   }
 
   this.updateSmoke(frame);
+
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[0], 0, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[5], 5, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[1], 1, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[6], 6, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[2], 2, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[7], 7, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[3], 3, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[8], 8, {direction: 'fall'});
+
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[11], 11, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[21], 21, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[31], 31, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[40], 40, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[50], 50, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[60], 60, {direction: 'fall'});
+
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[17], 17, {direction: 'up', speed: 30, maxHeight: 4000});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[51], 51, {direction: 'up', speed: 15, maxHeight: 8000});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[41], 41, {direction: 'up', speed: 20, maxHeight: 3000});
+
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[25], 25, {direction: 'up', speed: 20, maxHeight: 3000});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[34], 34, {direction: 'up', speed: 20, maxHeight: 3500});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[44], 44, {direction: 'up', speed: 20, maxHeight: 4000});
+
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[18], 18, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[23], 23, {direction: 'fall'});
+  this.updateDoomHexagon(relativeFrame, this.hexagonFallingTimings[27], 27, {direction: 'fall'});
 };
 
 DesertLayer.prototype.updateDandelionSeed = function(frame, relativeFrame) {
@@ -652,6 +707,20 @@ DesertLayer.prototype.updateWaterPlants = function(frame, relativeFrame) {
   }
 };
 
+DesertLayer.prototype.updateDoomHexagon = function (relativeFrame, startFrame, hexagonIndex, options) {
+  var hex = this.desertHexes[hexagonIndex];
+  var t = clamp(0, relativeFrame - startFrame, 999999);
+  if (options.direction === 'up') {
+    hex.position.y = this.desertHexStart + options.speed * t < this.desertHexStart + options.maxHeight ? 
+                                                               this.desertHexStart + options.speed * t :  
+                                                               this.desertHexStart + options.maxHeight;
+  } else if (options.direction === 'fall') {
+    var acceleration = -5;
+    hex.position.y = this. desertHexStart + 0.5 * acceleration * t * t;
+
+  }
+};
+
 function Hexagon(radius, x, y, z, color) {
   var hexGeometry = new THREE.CircleGeometry(radius, 6);
   var hex = new THREE.Mesh(
@@ -660,7 +729,20 @@ function Hexagon(radius, x, y, z, color) {
       shading: THREE.FlatShading
   }));
   hex.position = new THREE.Vector3(x, y, z);
-  hex.rotation.x = -Math.PI/2;
+  hex.rotation.x = -Math.PI / 2;
+  hex.userData.baseColor = hex.material.color;
+  return hex;
+}
+
+function DesertHexagon(radius, x, y, z, color) {
+  var hexGeometry = new THREE.CylinderGeometry(radius, radius, 10000, 6);
+  var hex = new THREE.Mesh(
+    hexGeometry, new THREE.MeshBasicMaterial({
+      color: color,
+      shading: THREE.FlatShading
+  }));
+  hex.position = new THREE.Vector3(x, y, z);
+  hex.rotation.y = Math.PI / 6;
   hex.userData.baseColor = hex.material.color;
   return hex;
 }
