@@ -116,16 +116,6 @@
     }
   },
   {
-    "type": "HeatHazeLayer",
-    "displayName": "Heat haze",
-    "startFrame": 3030,
-    "endFrame": 4300,
-    "color": "#1b592f",
-    "config": {
-      "offset": 0
-    }
-  },
-  {
     "type": "LensFlareLayer",
     "displayName": "Lens flare",
     "startFrame": 1730,
