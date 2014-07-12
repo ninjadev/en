@@ -27,7 +27,7 @@ function VolcanoFactory( scene, fireFactory) {
 
       var lavaBalls = [];
       for (var i = 0; i < nlavaBalls; i++) {
-        var lavaBall = lavaBallFactory.create( 20, maxLavaBallSize, 7 );
+        var lavaBall = lavaBallFactory.create( 20, maxLavaBallSize, 4 );
         lavaBalls.push( lavaBall );
       }
 
@@ -71,7 +71,7 @@ function LavaBallFactory( scene, material, skittles, fireFactory ) {
 
  return {
     create: function create( scale, maxSize, detail ) {
-      var mappedSize = clamp( 10, scale / Math.random(), maxSize );
+      var mappedSize = clamp( 50, scale / Math.random(), maxSize );
       var lavaBallGeometry = new THREE.SphereGeometry( mappedSize, detail, detail );
       var lavaBall = new THREE.Mesh(
         lavaBallGeometry,
