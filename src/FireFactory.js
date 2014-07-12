@@ -9,6 +9,7 @@
  */
 function FireFactory( scene ) {
   var firetexture = Loader.loadTexture('res/textures/fireparticle.png');
+  Loader.start(); 
   return {
     create: function create(pos, girth, height, number){
       var particles = new THREE.Geometry();
