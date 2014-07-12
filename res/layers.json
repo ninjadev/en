@@ -163,6 +163,13 @@
     "color": "#784411"
   },
   {
+    "type": "ShearLayer",
+    "displayName": "Space glitch effects 2",
+    "startFrame": 2017,
+    "endFrame": 9823,
+    "color": "#41ccfb"
+  },
+  {
     "type": "VignetteLayer",
     "displayName": "Vignette",
     "startFrame": 1448,
