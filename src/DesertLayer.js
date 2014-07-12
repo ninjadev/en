@@ -499,7 +499,6 @@ DesertLayer.prototype.addSmokeColumn = function(x,y,z,frame,imgScale,radiusRange
 DesertLayer.prototype.updateSmoke = function(frame) {
   for(var i=0;i<this.smokeColumns.length; i++) {
     if(frame-this.smokeBirthTimes[i]>540 || frame-this.smokeBirthTimes[i]<-1) {
-      console.log(this.smokeColumns);
       this.scene.remove(this.smokeColumns[i]);
       delete this.smokeColumns[i];
       this.smokeColumns.splice(i,1);
