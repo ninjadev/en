@@ -156,7 +156,7 @@ function DesertLayer(layer) {
   this.initGrass();
   this.initWaterPlants();
 
-  this.initShadowLight();
+  this.initShadowLight(this.dandelionSeed);
 
   this.Z = 10;
 
@@ -360,28 +360,30 @@ DesertLayer.prototype.initGrass = function() {
   });
 };
 
-DesertLayer.prototype.initShadowLight = function() {
-  light = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2, 1 );
-  light.position.set( -810,80,-61 );
-  light.target.position.set( -803, 60, -61 );
+DesertLayer.prototype.initShadowLight = function(parrent) {
+  this.danderlight = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2, 1 );
+  this.danderlight.target.position.set( -803, 60, -61 );
 
-  light.castShadow = true;
+  this.danderlight.castShadow = true;
 
-  light.shadowCameraNear = 1;
-  light.shadowCameraFar = 2500;
-  light.shadowCameraFov = 50;
+  this.danderlight.shadowCameraNear = 10;
+  this.danderlight.shadowCameraFar = 2500;
+  this.danderlight.shadowCameraFov = 50;
 
-  light.shadowCameraVisible = false;
+  this.danderlight.shadowCameraVisible = false;
 
-  light.shadowBias = 0.0001;
-  light.shadowDarkness = 0.5;
+  this.danderlight.shadowBias = 0.0001;
+  this.danderlight.shadowDarkness = 0.5;
 
-  light.shadowMapWidth = 2048;
-  light.shadowMapHeight = 1024;
+  this.danderlight.shadowMapWidth = 2048;
+  this.danderlight.shadowMapHeight = 1024;
 
-  this.scene.add(light);
+  this.scene.add(this.danderlight);
 }
 
+DesertLayer.prototype.updateShadowLight = function() {
+  this.danderlight.position = new THREE.Vector3(100,200,100).add(this.dandelionSeed.position);
+}
 
 DesertLayer.prototype.initSmokeColumns = function() {
   this.smokeColumns = new Array();
@@ -549,8 +551,6 @@ DesertLayer.prototype.end = function() {
 };
 
 DesertLayer.prototype.render = function(renderer, interpolation) {
-  renderer.shadowMapEnabled = true;
-  renderer.shadowMapType = THREE.PCFShadowMap;
   renderer.render(this.scene, this.camera);
 };
 
@@ -584,6 +584,8 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
 
   //TODO: don't update dandelion seed when it is not in sight
   this.updateDandelionSeed(frame, relativeFrame);
+
+  this.updateShadowLight();
 
   this.updateGrass(frame, relativeFrame);
   this.updateWaterPlants(frame, relativeFrame);
@@ -815,15 +817,18 @@ function DandelionSeed(layer, scale, castShadow) {
   seedSphere = new THREE.Mesh(seedSphereGeometry, layer.dandelionSeedMaterials.seed);
   seedSphere.scale.y = 2.9;
   seedSphere.position.y = -240;
+  seedSphere.castShadow = castShadow;
 
   bodyCylinder = new THREE.Mesh(bodyCylinderGeometry, layer.dandelionSeedMaterials.body);
   bodyCylinder.position.y = -120;
+  bodyCylinder.castShadow = castShadow;
 
   dandelionSeed.wingCylinders = [];
 
   Math.seedrandom("iverjo-is-sexy");
   for (var i = 0; i < 50; i++) {
     var wingCylinder = new THREE.Mesh(wingCylinderGeometry, layer.dandelionSeedMaterials.wing);
+    wingCylinder.castShadow = castShadow;
 
     wingCylinder.rotation.z = Math.PI / 5 + Math.random() * (Math.PI / 2 - Math.PI / 4);
     wingCylinder.rotation.y = Math.random() * 2 * Math.PI;
@@ -841,8 +846,6 @@ function DandelionSeed(layer, scale, castShadow) {
   dandelionSeed.add(bodyCylinder);
 
   dandelionSeed.scale.set(scale, scale, scale);
-
-  dandelionSeed.castShadow = castShadow;
 
   return dandelionSeed;
 }
