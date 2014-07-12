@@ -133,7 +133,7 @@
   {
     "type": "CubicLensDistortionLayer",
     "displayName": "Lens distortion",
-    "startFrame": 2017,
+    "startFrame": 1448,
     "endFrame": 9823,
     "color": "#4dba98"
   },
@@ -143,5 +143,12 @@
     "startFrame": 2017,
     "endFrame": 9823,
     "color": "#784411"
+  },
+  {
+    "type": "VignetteLayer",
+    "displayName": "Vignette",
+    "startFrame": 1448,
+    "endFrame": 9823,
+    "color": "#5d91de"
   }
 ]
