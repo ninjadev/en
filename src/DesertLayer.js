@@ -419,14 +419,14 @@ DesertLayer.prototype.initGrass = function() {
       var deltaX = doomedPoint.x - clonedObject.position.x;
       var deltaZ = doomedPoint.z - clonedObject.position.z;
       var ishDistanceToDoomedPlace = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-      clonedObject.userData.removeInDoom = ishDistanceToDoomedPlace < 850;
+      clonedObject.userData.removeInDoom = ishDistanceToDoomedPlace < 1000;
 
-      Math.seedrandom("iverjo-likes-grass" + i.toString());
+      Math.seedrandom("iverjo-grass" + i.toString());
       var scale = 150 + 150 * Math.random();
       clonedObject.scale.set(scale, scale * 1.25, scale * 1.5);
       clonedObject.initScale = scale;
     
-      if(Math.random() < 0.25){
+      if (Math.random() < 0.25 && !clonedObject.userData.removeInDoom) {
         var firePos = clonedObject.position.clone();
         firePos.y = that.grass.targetY;
         firePos.x += 0.5*scale*Math.sin(clonedObject.rotation.y);
