@@ -253,7 +253,9 @@ function DesertLayer(layer) {
   this.barkNormalMap = Loader.loadTexture('res/bark-normalmap.jpg');
   this.barkNormalMap.wrapS = this.barkNormalMap.wrapT = THREE.RepeatWrapping;
   this.barkNormalMap.repeat.set(12, 4);
-  Loader.start(function(){}, function(){});
+  if(!window.FILES){
+    Loader.start(function(){}, function(){});
+  }
 
   this.tubes = [];
   this.tubeContainer = new THREE.Object3D();
