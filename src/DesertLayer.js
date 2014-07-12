@@ -250,10 +250,10 @@ function DesertLayer(layer) {
   this.lightBrownColor = new THREE.Color(0xc3a779).getHSL();
   this.darkBrownColor = new THREE.Color(0x4f4340).getHSL();
   this.darkBrownColor = new THREE.Color(0xffffff).getHSL();
-  this.barkTexture = Loader.loadTexture('/res/bark.jpg');
+  this.barkTexture = Loader.loadTexture('res/bark.jpg');
   this.barkTexture.wrapS = this.barkTexture.wrapT = THREE.RepeatWrapping;
   this.barkTexture.repeat.set(12, 4);
-  this.barkNormalMap = Loader.loadTexture('/res/bark-normalmap.jpg');
+  this.barkNormalMap = Loader.loadTexture('res/bark-normalmap.jpg');
   this.barkNormalMap.wrapS = this.barkNormalMap.wrapT = THREE.RepeatWrapping;
   this.barkNormalMap.repeat.set(12, 4);
   Loader.start(function(){}, function(){});
@@ -331,8 +331,9 @@ DesertLayer.prototype.initGrass = function() {
     side: THREE.DoubleSide
   });
 
-  var loader = new THREE.OBJLoader();
-  loader.load('http://localhost:9999/res/objects/Grass_01.obj', function(object) {
+  Loader.loadAjax('res/objects/Grass_01.obj', function(text) {
+    var objLoader = new THREE.OBJLoader();
+    var object = objLoader.parse(text);
     object.traverse(function(child) {
       if (child instanceof THREE.Mesh) {
         child.material = material;
@@ -491,8 +492,9 @@ DesertLayer.prototype.initWaterPlants = function() {
   };
 
   var loadObject = function (objPath, material) {
-    var loader = new THREE.OBJLoader();
-    loader.load(objPath, function(object) {
+    var objLoader = new THREE.OBJLoader();
+    Loader.loadAjax(objPath, function(text) {
+      var object = objLoader.parse(text);
       object.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
           child.material = material;
@@ -506,7 +508,7 @@ DesertLayer.prototype.initWaterPlants = function() {
     });
   };
 
-  var prefix = 'http://localhost:9999/res/objects/';
+  var prefix = 'res/objects/';
   loadObject(prefix + 'duckweed.obj', duckweedMaterial);
   loadObject(prefix + 'lotus_outer.obj', outerLotusMaterial);
   loadObject(prefix + 'lotus_middle.obj', middleLotusMaterial);
