@@ -412,6 +412,14 @@ DesertLayer.prototype.initGrass = function() {
       clonedObject.position.y = that.grass.startY;
       clonedObject.position.z = that.WATER_CENTER_Z + randomRadius * Math.sin(randomAngle);
       clonedObject.rotation.y = Math.sin(randomRadius);
+
+      //certain grasses need to be removed before doom starts
+      var doomedPoint = new THREE.Vector3(3012.31, 20, -1187.6);
+      var deltaX = doomedPoint.x - clonedObject.position.x;
+      var deltaZ = doomedPoint.z - clonedObject.position.z;
+      var ishDistanceToDoomedPlace = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+      clonedObject.userData.removeInDoom = ishDistanceToDoomedPlace < 850;
+
       Math.seedrandom("iverjo-likes-grass" + i.toString());
       var scale = 150 + 150 * Math.random();
       clonedObject.scale.set(scale, scale * 1.25, scale * 1.5);
@@ -813,6 +821,16 @@ DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
       grass.scale.set(scale, scale, scale);
     }
   }
+
+  //Remove certain grasses in doom
+  if (relativeFrame > 3130) {
+    for (var i = 0; i < this.grasses.length; i++) {
+      if (this.grasses[i].userData.removeInDoom) {
+        this.grasses[i].position.y = -20000;
+      }
+    }
+  }
+
   //windy
   if (relativeFrame >= this.config.grass.startGrowthFrame
     && relativeFrame < this.config.grass.windyUntilFrame) {
