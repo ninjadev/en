@@ -1,0 +1,6 @@
+{
+    "tDiffuse": { "type": 't', "value": null },
+    "red": { "type": 'f', "value": 1},
+    "green": { "type": 'f', "value": 1},
+    "blue": { "type": 'f', "value": 1}
+}
