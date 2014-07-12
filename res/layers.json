@@ -91,7 +91,7 @@
     "color": "#8c2b3c",
     "config": {
       "train": {
-        "startShootFrame": 2770,
+        "startShootFrame": 2400,
         "endShootFrame": 3050
       }
     }
