@@ -17,6 +17,6 @@ LetterboxLayer.prototype.end = function() {
 
 LetterboxLayer.prototype.update = function(frame, relativeFrame) {
   this.shaderPass.uniforms.ratio.value = (16/9)/(16/(
-        smoothstep(3.6, 9, (relativeFrame - 1304)/100)
+        smoothstep(3.6, 9, (relativeFrame - 1357)/150)
        ));
 };
