@@ -52,7 +52,8 @@
     "type": "DesertLayer",
     "dependencies": [
       "VolcanoFactory",
-      "LeafFactory"
+      "LeafFactory",
+      "FireFactory"
     ],
     "displayName": "Desert",
     "startFrame": 1443,

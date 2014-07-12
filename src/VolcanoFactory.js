@@ -13,7 +13,7 @@
  * volcano.update( relativeFrame );
  *
  */
-function VolcanoFactory( scene ) {
+function VolcanoFactory( scene, fireFactory) {
   SHADERS.volcano.uniforms.tExplosion.value =
       Loader.loadTexture( 'res/explosion.png' );
 
@@ -23,11 +23,11 @@ function VolcanoFactory( scene ) {
       var volcano = new THREE.Object3D();
       volcano.position = position.clone();
 
-      var lavaBallFactory = new LavaBallFactory( volcano, lavaBallMaterial, skittles );
+      var lavaBallFactory = new LavaBallFactory( volcano, lavaBallMaterial, skittles, fireFactory );
 
       var lavaBalls = [];
       for (var i = 0; i < nlavaBalls; i++) {
-        var lavaBall = lavaBallFactory.create( 10, maxLavaBallSize, 7 );
+        var lavaBall = lavaBallFactory.create( 20, maxLavaBallSize, 4 );
         lavaBalls.push( lavaBall );
       }
 
@@ -51,24 +51,27 @@ function VolcanoFactory( scene ) {
           scene.add( volcano );
           for ( var i = 0; i < nlavaBalls; i++ ) {
             scene.add( lavaBalls[ i ] );
+            scene.add( lavaBalls[ i ].fire );
           }
         } else {
           scene.remove( volcano );
           for ( var i = 0; i < nlavaBalls; i++ ) {
             scene.remove( lavaBalls[ i ] );
+            scene.remove( lavaBalls[ i ].fire );
           }
         }
       }
-
+      
       return volcano;
     }
   }
 };
 
-function LavaBallFactory( scene, material, skittles ) {
+function LavaBallFactory( scene, material, skittles, fireFactory ) {
+
  return {
     create: function create( scale, maxSize, detail ) {
-      var mappedSize = clamp( 10, scale / Math.random(), maxSize );
+      var mappedSize = clamp( 50, scale / Math.random(), maxSize );
       var lavaBallGeometry = new THREE.SphereGeometry( mappedSize, detail, detail );
       var lavaBall = new THREE.Mesh(
         lavaBallGeometry,
@@ -76,6 +79,7 @@ function LavaBallFactory( scene, material, skittles ) {
           undefined
           : material );
 
+      //lavaBall.fire = fireFactory.create(lavaBall.position.clone(),100,800,500);
       lavaBall.internalOffset = Math.random() * 100;
       lavaBall.period = 60 * 7 ;
       lavaBall.generateDirection = function generateDirection() {
@@ -88,15 +92,17 @@ function LavaBallFactory( scene, material, skittles ) {
       lavaBall.generateDirection();
       lavaBall.acceleration = new THREE.Vector3( 0, -0.8, 0 );
       lavaBall.airTime =  - 2 * lavaBall.direction.y / lavaBall.acceleration.y;
+      lavaBall.fire = fireFactory.create(lavaBall.position, mappedSize, mappedSize * 5, mappedSize/2);
 
       lavaBall.update = function update( relativeFrame ) {
         if ( relativeFrame < 0 ) {
           this.position = new THREE.Vector3( 0, 0, 0 );
           scene.remove( this );
+          scene.remove(this.fire);
           return;
         }
         scene.add( this );
-
+        scene.add( this.fire );
         var internalFrame = relativeFrame % this.period;
 
         if ( internalFrame > ( this.airTime + this.internalOffset ) ) {
@@ -123,6 +129,9 @@ function LavaBallFactory( scene, material, skittles ) {
             )
             .add( new THREE.Vector3( 0, -10, 0 ) );
         }
+
+        this.fire.position = this.position;
+        this.fire.update(internalFrame);
       };
 
       return lavaBall;
