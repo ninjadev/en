@@ -62,6 +62,22 @@ function DesertLayer(layer) {
     }
   }
 
+  var rocketHexGeo = new THREE.CylinderGeometry(1500, 1500, 5000, 6);
+  this.rocketStartPosition = -10000; 
+
+  var rocketHex = new THREE.Mesh(
+    rocketHexGeo, new THREE.MeshLambertMaterial({
+      color: 0xbb8855,
+      shading: THREE.FlatShading
+  }));
+  rocketHex.receiveShadow = true;
+  rocketHex.position = new THREE.Vector3(900, -10000, -189);
+  rocketHex.rotation.y = Math.PI / 6;
+
+  this.rocketHex = rocketHex;
+  this.scene.add(rocketHex);
+  this.rocketStart = 5080;
+
   var waterGeometry = new THREE.CircleGeometry(1500, 6);
   var waterMaterial = new THREE.MeshBasicMaterial({
     color: 0x3399ff
@@ -649,6 +665,10 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
     var material = this.doomSkyBox.material.materials[i];
     material.opacity = smoothstep(0, 1, (frame - 4400) / (4440 - 4400));
   }
+
+
+  var t = clamp(0, relativeFrame - this.rocketStart, 999999);
+  this.rocketHex.position.y = this.rocketStartPosition + t * 100;
 };
 
 DesertLayer.prototype.updateDoomHexagons = function(relativeFrame) {
