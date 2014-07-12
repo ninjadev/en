@@ -27,7 +27,7 @@ function VolcanoFactory( scene, fireFactory) {
 
       var lavaBalls = [];
       for (var i = 0; i < nlavaBalls; i++) {
-        var lavaBall = lavaBallFactory.create( 20, maxLavaBallSize, 4 );
+        var lavaBall = lavaBallFactory.create( 20, maxLavaBallSize, 7 );
         lavaBalls.push( lavaBall );
       }
 
