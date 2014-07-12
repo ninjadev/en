@@ -199,8 +199,8 @@ SpaceLayer.prototype.initTrain = function() {
       object.userData.initPos.y,
       object.userData.initPos.z
     );
-    object.userData.initSpeed = 58000;
-    object.userData.acceleration = -180000;
+    object.userData.initSpeed = 30000;
+    object.userData.acceleration = 0;//-180000;
 
     object.scale.set(20, 20, -20);
     that.train = object;
