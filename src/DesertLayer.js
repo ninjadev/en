@@ -149,12 +149,14 @@ function DesertLayer(layer) {
   this.scene.add(this.doomSkyBox);
 
   this.initDandelionSeedMaterials();
-  this.dandelionSeed = DandelionSeed(this, 0.2);
+  this.dandelionSeed = DandelionSeed(this, 0.2, true);
   this.dandelionSeed.position.copy(this.config.dandelion.start);
   this.scene.add(this.dandelionSeed);
 
   this.initGrass();
   this.initWaterPlants();
+
+  this.initShadowLight(this.dandelionSeed);
 
   this.Z = 10;
 
@@ -358,6 +360,31 @@ DesertLayer.prototype.initGrass = function() {
   });
 };
 
+DesertLayer.prototype.initShadowLight = function(parrent) {
+  this.danderlight = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2, 1 );
+  this.danderlight.target.position.set( -803, 60, -61 );
+
+  this.danderlight.castShadow = true;
+
+  this.danderlight.shadowCameraNear = 10;
+  this.danderlight.shadowCameraFar = 2500;
+  this.danderlight.shadowCameraFov = 50;
+
+  this.danderlight.shadowCameraVisible = false;
+
+  this.danderlight.shadowBias = 0.0001;
+  this.danderlight.shadowDarkness = 0.5;
+
+  this.danderlight.shadowMapWidth = 2048;
+  this.danderlight.shadowMapHeight = 1024;
+
+  this.scene.add(this.danderlight);
+}
+
+DesertLayer.prototype.updateShadowLight = function() {
+  this.danderlight.position = new THREE.Vector3(100,200,100).add(this.dandelionSeed.position);
+}
+
 DesertLayer.prototype.initSmokeColumns = function() {
   this.smokeColumns = new Array();
   this.smokeBirthTimes = new Array();
@@ -558,6 +585,8 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
   //TODO: don't update dandelion seed when it is not in sight
   this.updateDandelionSeed(frame, relativeFrame);
 
+  this.updateShadowLight();
+
   this.updateGrass(frame, relativeFrame);
   this.updateWaterPlants(frame, relativeFrame);
 
@@ -741,10 +770,11 @@ function Hexagon(radius, x, y, z, color) {
 function DesertHexagon(radius, x, y, z, color) {
   var hexGeometry = new THREE.CylinderGeometry(radius, radius, 10000, 6);
   var hex = new THREE.Mesh(
-    hexGeometry, new THREE.MeshBasicMaterial({
+    hexGeometry, new THREE.MeshLambertMaterial({
       color: color,
       shading: THREE.FlatShading
   }));
+  hex.receiveShadow = true;
   hex.position = new THREE.Vector3(x, y, z);
   hex.rotation.y = Math.PI / 6;
   hex.userData.baseColor = hex.material.color;
@@ -772,7 +802,7 @@ function randomDesertColor() {
  * @returns {THREE.Object3D}
  * @constructor
  */
-function DandelionSeed(layer, scale) {
+function DandelionSeed(layer, scale, castShadow) {
   var seedSphereGeometry, bodyCylinderGeometry, wingCylinderGeometry, //geometries
     dandelionSeed, seedSphere, topSphere, bodyCylinder, // meshes
     WING_LENGTH = 120; //constants
@@ -787,15 +817,18 @@ function DandelionSeed(layer, scale) {
   seedSphere = new THREE.Mesh(seedSphereGeometry, layer.dandelionSeedMaterials.seed);
   seedSphere.scale.y = 2.9;
   seedSphere.position.y = -240;
+  seedSphere.castShadow = castShadow;
 
   bodyCylinder = new THREE.Mesh(bodyCylinderGeometry, layer.dandelionSeedMaterials.body);
   bodyCylinder.position.y = -120;
+  bodyCylinder.castShadow = castShadow;
 
   dandelionSeed.wingCylinders = [];
 
   Math.seedrandom("iverjo-is-sexy");
   for (var i = 0; i < 50; i++) {
     var wingCylinder = new THREE.Mesh(wingCylinderGeometry, layer.dandelionSeedMaterials.wing);
+    wingCylinder.castShadow = castShadow;
 
     wingCylinder.rotation.z = Math.PI / 5 + Math.random() * (Math.PI / 2 - Math.PI / 4);
     wingCylinder.rotation.y = Math.random() * 2 * Math.PI;
