@@ -168,8 +168,9 @@ SpaceLayer.prototype.initTrain = function() {
     map: Loader.loadTexture('res/textures/train.jpg')
   });
 
-  var loader = new THREE.OBJLoader();
-  loader.load('http://localhost:9999/res/objects/train.obj', function(object) {
+  var objLoader = new THREE.OBJLoader();
+  Loader.loadAjax('res/objects/train.obj', function(text) {
+    var object = objLoader.parse(text);
     object.traverse(function(child) {
       if (child instanceof THREE.Mesh) {
         child.material = material;
