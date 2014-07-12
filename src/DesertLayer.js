@@ -310,7 +310,7 @@ function DesertLayer(layer) {
   }
 
   this.scene.add(this.tubeContainer);
-  this.tubeContainer.position = new THREE.Vector3(-796.08,60.1,-55.48);
+  this.tubeContainer.position = new THREE.Vector3(-800.27, 0,-55.13);
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 
@@ -781,7 +781,7 @@ DesertLayer.prototype.updateTree = function(frame, relativeFrame) {
 DesertLayer.prototype.updateLeaves = function(frame, relativeFrame) {
   for (var i = 0; i < this.leaves.length; i++) {
     var leaf = this.leaves[i];
-    leaf.update(frame - 3500);
+    leaf.update(frame - 3000);
   }
 };
 
