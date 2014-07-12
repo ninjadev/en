@@ -10,6 +10,7 @@ function CloudLayer(layer) {
   this.scene.add(this.camera);
 
   var texture = Loader.loadTexture('res/cloud.png');
+  Loader.start(function(){}, function(){});
   texture.magFilter = THREE.LinearMipMapLinearFilter;
   texture.minFilter = THREE.LinearMipMapLinearFilter;
   var fog = new THREE.Fog( 0x4584b4, - 100, 3000 );
