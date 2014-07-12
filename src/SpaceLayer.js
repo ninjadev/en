@@ -193,14 +193,14 @@ SpaceLayer.prototype.initTrain = function() {
         child.material = material;
       }
     });
-    object.userData.initPos = {x: -5000, y: 1673, z: -3363};
+    object.userData.initPos = {x: -5000, y: 800, z: -3363};
     object.position.set(
-      object.userData.initPos.x,
+      -20000,
       object.userData.initPos.y,
       object.userData.initPos.z
     );
     object.userData.initSpeed = 58000;
-    object.userData.acceleration = -200000;
+    object.userData.acceleration = -180000;
 
     object.scale.set(20, 20, -20);
     that.train = object;
@@ -219,8 +219,8 @@ SpaceLayer.prototype.initTrain = function() {
   this.shootingStar.userData.xOffset = -1400;
   this.shootingStar.userData.zOffset = -450;
   this.shootingStar.position.set(
-    -5000 + this.shootingStar.userData.xOffset,
-    1673,
+    -20000,
+    800,
     -3363 + this.shootingStar.userData.zOffset
   );
 
@@ -228,25 +228,19 @@ SpaceLayer.prototype.initTrain = function() {
 };
 
 SpaceLayer.prototype.updateTrain = function(frame, relativeFrame) {
-  if (!this.train) {
-    return false;
-  }
-  if (relativeFrame >= this.config.train.startShootFrame
-    && relativeFrame < this.config.train.endShootFrame) {
+  if (relativeFrame < this.config.train.startShootFrame || relativeFrame > this.config.train.endShootFrame) {
+    this.train.position.x = -20000; //hide train outside the skybox
+  } else {
     var t = (relativeFrame - this.config.train.startShootFrame) / (this.config.train.endShootFrame - this.config.train.startShootFrame);
     var speed = this.train.userData.initSpeed + t * this.train.userData.acceleration;
     if (speed < 0) {
-      this.scene.remove(this.train);
-      this.scene.remove(this.shootingStar);
-      this.train = null;
-      this.shootingStar = null;
-      return false;
+      this.train.position.x = -20000;
     }
     this.train.position.x = this.train.userData.initPos.x
       + t * this.train.userData.initSpeed
       + 0.5 * this.train.userData.acceleration * t * t;
-    this.shootingStar.position.x = this.train.position.x + this.shootingStar.userData.xOffset;
   }
+  this.shootingStar.position.x = this.train.position.x + this.shootingStar.userData.xOffset;
 };
 
 SpaceLayer.prototype.updateFlyingStone = function(frame, relativeFrame) {

@@ -90,8 +90,8 @@
     "color": "#8c2b3c",
     "config": {
       "train": {
-        "startShootFrame": 100,
-        "endShootFrame": 350
+        "startShootFrame": 2770,
+        "endShootFrame": 3050
       }
     }
   },
