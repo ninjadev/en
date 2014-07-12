@@ -403,7 +403,7 @@ DesertLayer.prototype.initShadowLight = function(parrent) {
 }
 
 DesertLayer.prototype.updateShadowLight = function() {
-  this.danderlight.position = new THREE.Vector3(100,200,100).add(this.dandelionSeed.position);
+  this.danderlight.position = new THREE.Vector3( -25,200,100).add(this.dandelionSeed.position);
 }
 
 DesertLayer.prototype.initSmokeColumns = function() {
