@@ -15,21 +15,24 @@ function DesertLayer(layer) {
   //light
   this.ambientLight = new THREE.AmbientLight(0x555555);
   this.light1 = new THREE.PointLight(0xFFEAC3, .7);
-  this.light2 = new THREE.PointLight(0xFFEAC3, .4);
-  this.light3 = new THREE.PointLight(0xFFEAC3, .4);
-  this.light4 = new THREE.PointLight(0xFFEAC3, .4);
-  this.light5 = new THREE.PointLight(0xFFEAC3, .4);
+  this.light2 = new THREE.PointLight(0xFFEAC3, .3);
+  this.light3 = new THREE.PointLight(0xFFEAC3, .3);
+  this.light4 = new THREE.PointLight(0xFFEAC3, .3);
+  this.light5 = new THREE.PointLight(0xFFEAC3, .3);
+  this.directionalLight = new THREE.DirectionalLight( 0xFFCC79, 0.4 );
   this.light1.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z);
   this.light2.position = new THREE.Vector3(this.WATER_CENTER_X + 1500, 1000, this.WATER_CENTER_Z);
   this.light3.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z + 1500);
   this.light4.position = new THREE.Vector3(this.WATER_CENTER_X - 1500, 1000, this.WATER_CENTER_Z);
   this.light5.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z - 1500);
+  this.directionalLight.position = new THREE.Vector3(this.WATER_CENTER_X, 1000, this.WATER_CENTER_Z);
   this.scene.add(this.ambientLight);
   this.scene.add(this.light1);
   this.scene.add(this.light2);
   this.scene.add(this.light3);
   this.scene.add(this.light4);
   this.scene.add(this.light5);
+  this.scene.add(this.directionalLight);
 
 
   this.fireFactory = new FireFactory(this.scene);
@@ -60,6 +63,22 @@ function DesertLayer(layer) {
       }
     }
   }
+
+  var rocketHexGeo = new THREE.CylinderGeometry(1500, 1500, 5000, 6);
+  this.rocketStartPosition = -10000; 
+
+  var rocketHex = new THREE.Mesh(
+    rocketHexGeo, new THREE.MeshLambertMaterial({
+      color: 0xbb8855,
+      shading: THREE.FlatShading
+  }));
+  rocketHex.receiveShadow = true;
+  rocketHex.position = new THREE.Vector3(900, -10000, -189);
+  rocketHex.rotation.y = Math.PI / 6;
+
+  this.rocketHex = rocketHex;
+  this.scene.add(rocketHex);
+  this.rocketStart = 4870;
 
   var waterGeometry = new THREE.CircleGeometry(1500, 6);
   var waterMaterial = new THREE.MeshBasicMaterial({
@@ -121,7 +140,7 @@ function DesertLayer(layer) {
   this.hexagonFallingTimings[60] = this.hexagonFallingBase + 200;
 
   // Follow this rising with camera
-  this.hexagonFallingTimings[51] = 3200 + 120;
+  this.hexagonFallingTimings[51] = 5370
   this.hexagonFallingTimings[41] = 3200 + 140;
   this.hexagonFallingTimings[25] = 3200 + 140;
   this.hexagonFallingTimings[34] = 3200 + 145;
@@ -293,7 +312,7 @@ function DesertLayer(layer) {
   }
 
   this.scene.add(this.tubeContainer);
-  this.tubeContainer.position = new THREE.Vector3(-796.08,60.1,-55.48);
+  this.tubeContainer.position = new THREE.Vector3(-800.27, 0,-55.13);
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 
@@ -557,7 +576,7 @@ DesertLayer.prototype.initWaterPlants = function() {
       var randomRadius = 910 * Math.sqrt(Math.sqrt(Math.random()));
       var randomScale = 30 + 40 * Math.random();
       waterPlant.position.x = that.WATER_CENTER_X + randomRadius * Math.cos(randomAngle);
-      waterPlant.position.y = that.config.waterPlants.targetY;
+      waterPlant.position.y = that.config.waterPlants.startY;
       waterPlant.position.z = that.WATER_CENTER_Z + randomRadius * Math.sin(randomAngle);
       waterPlant.rotation.y = Math.sin(randomRadius);
       waterPlant.userData.initPos = {
@@ -613,12 +632,14 @@ DesertLayer.prototype.render = function(renderer, interpolation) {
 DesertLayer.prototype.update = function(frame, relativeFrame) {
   this.cameraController.updateCamera(relativeFrame);
 
-  if (frame < 4400) {
+  if (frame < 4600) {
     this.scene.remove(this.volcano);
-  } else if (frame > 4400) {
+    this.waterPond.position.y = 0;
+  } else {
+    this.waterPond.position.y = -10000;
     this.scene.add(this.volcano);
-    this.volcano.update( frame - 4600 );
-    this.volcano.position.y = clamp(-10, -10 + (frame - 4400) / 27, 20);
+    this.volcano.update( frame - 4800 );
+    this.volcano.position.y = clamp(-10, -10 + (frame - 4600) / 27, 20);
   }
 
   var material = this.waterBorder.material;
@@ -658,6 +679,10 @@ DesertLayer.prototype.update = function(frame, relativeFrame) {
     var material = this.skyBox.material.materials[i];
     material.opacity = smoothstep(1, 0, (frame - 4400) / (4440 - 4400));
   }
+
+
+  var t = clamp(0, relativeFrame - this.rocketStart, 999999);
+  this.rocketHex.position.y = this.rocketStartPosition + t * 100;
 };
 
 DesertLayer.prototype.updateDoomHexagons = function(relativeFrame) {
@@ -770,7 +795,7 @@ DesertLayer.prototype.updateTree = function(frame, relativeFrame) {
 DesertLayer.prototype.updateLeaves = function(frame, relativeFrame) {
   for (var i = 0; i < this.leaves.length; i++) {
     var leaf = this.leaves[i];
-    leaf.update(frame - 3500);
+    leaf.update(frame - 3000);
   }
 };
 
@@ -816,6 +841,14 @@ DesertLayer.prototype.updateGrass = function(frame, relativeFrame) {
 };
 
 DesertLayer.prototype.updateWaterPlants = function(frame, relativeFrame) {
+  if (relativeFrame > 3040) {
+    for (var i = 0; i < this.waterPlants.length; i++) {
+      this.scene.remove(this.waterPlants[i]);
+    }
+    this.waterPlants.length = 0;
+    return false;
+  }
+
   //grow
   if (relativeFrame >= this.config.waterPlants.startGrowthFrame
     && relativeFrame < (this.config.waterPlants.endGrowthFrame + this.grass.maxFramesOffset)) {

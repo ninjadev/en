@@ -23,9 +23,8 @@ LensFlareLayer.prototype.update = function(frame) {
     this.shaderPass.uniforms.width.value = 16 * 8;
     this.shaderPass.uniforms.height.value = 9 * 8;
     this.shaderPass.uniforms.time.value = frame;
-    this.shaderPass.uniforms.amount.value = lerp(0, 1.0, Math.min(Math.min(relativeFrame,endRelativeFrame) / 70, 1));
+    this.shaderPass.uniforms.amount.value = lerp(0, 1.3, Math.min(Math.min(relativeFrame,endRelativeFrame) / 70, 1));
     //this.shaderPass.uniforms.sunX.value = lerp(1.0,0.3, relativeFrame/(endRelativeFrame-relativeFrame));
-    console.log(frame);
     if(frame<1820) {
       this.shaderPass.uniforms.sunX.value = 
           -0.2 - (1820- frame)/500;

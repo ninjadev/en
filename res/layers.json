@@ -91,8 +91,8 @@
     "color": "#8c2b3c",
     "config": {
       "train": {
-        "startShootFrame": 100,
-        "endShootFrame": 350
+        "startShootFrame": 2770,
+        "endShootFrame": 3050
       }
     }
   },
@@ -114,16 +114,6 @@
     "color": "#291c4c",
     "config": {
       "strength": null
-    }
-  },
-  {
-    "type": "HeatHazeLayer",
-    "displayName": "Heat haze",
-    "startFrame": 2507,
-    "endFrame": 3306,
-    "color": "#1b592f",
-    "config": {
-      "offset": 0
     }
   },
   {
@@ -170,6 +160,13 @@
     "startFrame": 2017,
     "endFrame": 9823,
     "color": "#41ccfb"
+  },
+  {
+    "type": "ScanlineLayer",
+    "displayName": "Scanlines",
+    "startFrame": 1448,
+    "endFrame": 9823,
+    "color": "#5d91de"
   },
   {
     "type": "VignetteLayer",
