@@ -17,5 +17,6 @@ FadeInLayer.prototype.end = function() {
 };
 
 FadeInLayer.prototype.update = function(frame, relativeFrame) {
-  this.shaderPass.uniforms.amount.value = -(relativeFrame - 440)/(440 - 400);
+  this.shaderPass.uniforms.amount.value = lerp(
+      1, 0, (relativeFrame - 360) / (480 - 360));
 };
