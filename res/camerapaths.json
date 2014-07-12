@@ -46,12 +46,14 @@
       },
       {
         "type": "spline",
-        "startFrame": 2957,
-        "endFrame": 3350,
+        "startFrame": 2980,
+        "endFrame": 3900,
         "points": [
-          [8000, 1000, -10000],
-          [8000, 1000, -10000],
-          [8000, 1000, -10000]
+          [7456.85,220.15,-4329.15],
+          [6009.34,-114.91,-3305.8],
+          [4105.48,-5.26,-1338.29],
+          [3187.98,392.08,-1476.93],
+          [2414.86,2230.81,-1366.85]
         ]
       },
       {
@@ -103,10 +105,17 @@
         "point": [912.62,5.89,-232.93]
       },
       {
-        "type": "point",
-        "startFrame": 2957,
-        "endFrame": 3350,
-        "point": [0, 0, 0]
+        "type": "spline",
+        "startFrame": 2980,
+        "endFrame": 3900,
+        "easing": "smoothstep",
+        "points": [
+          [0, 0, 0],
+          [44.23,-137.51,717.01],
+          [-7425,2170.09,3795.84],
+          [-7425,885.4,5261.73],
+          [1072.56,89.56,-300.53]
+        ]
       }
     ],
     "roll": [
@@ -115,12 +124,28 @@
         "startFrame": 0,
         "endFrame": 1,
         "value": 0
+      },
+      {
+        "type": "transition",
+        "startFrame": 2980,
+        "endFrame": 3200,
+        "easing": "smoothstep",
+        "from": -1,
+        "to": 0.8
+      },
+      {
+        "type": "transition",
+        "startFrame": 3301,
+        "endFrame": 3450,
+        "easing": "smoothstep",
+        "from": 0.8,
+        "to": 0
       }
     ],
     "shake": [
       {
         "type": "transition",
-        "startFrame": 3900,
+        "startFrame": 2957,
         "endFrame": 3950,
         "from": 0,
         "to": 20
