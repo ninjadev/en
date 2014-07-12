@@ -73,7 +73,17 @@
       },
       {
         "type": "spline",
-        "startFrame": 5000,
+        "startFrame": 3901,
+        "endFrame": 4900,
+        "points": [
+          [1900, 200, 4824],
+          [1900, 1000, 4824],
+          [1700, 3500, 4824]
+        ]
+      },
+      {
+        "type": "spline",
+        "startFrame": 4901,
         "endFrame": 5285,
         "easing": "smoothstep",
         "points": [
@@ -148,6 +158,22 @@
           [-7425,885.4,5261.73],
           [1072.56,89.56,-300.53]
         ]
+      },
+      {
+        "type": "spline",
+        "startFrame": 3901,
+        "endFrame": 4900,
+        "points": [
+          [900, 100, 4624],
+          [900, 1500, 4624],
+          [900, 2500, 4624]
+        ]
+      },
+      {
+        "type": "point",
+        "startFrame": 4901,
+        "endFrame": 5000,
+        "point": [912.62,5.89,-232.93]
       }
     ],
     "roll": [

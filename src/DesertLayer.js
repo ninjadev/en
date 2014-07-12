@@ -234,6 +234,7 @@ function DesertLayer(layer) {
     ])
   ];
 
+  window.test = this.desertHexes[51];
 
   // TODO: Functioning, has to be moved somewhere visible.
   this.rubbles = [];
